@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GameSettings, GradeLevel, MathOperation, PlayerState, ThemeId } from '../types';
 import { THEMES } from '../data/themes';
 import { Play, Users, Sparkles, Check, ChevronRight, GraduationCap } from 'lucide-react';
@@ -69,6 +69,24 @@ export const SetupModal: React.FC<SetupModalProps> = ({
 
   const [selectedThemeId, setSelectedThemeId] = useState<ThemeId>(settings.themeId);
   const selectedTheme = THEMES[selectedThemeId];
+
+  // Keep avatars aligned with theme when theme changes or modal loads
+  useEffect(() => {
+    const currentTheme = THEMES[selectedThemeId];
+    if (!currentTheme) return;
+    setPlayerConfigs((prev) =>
+      prev.map((p, idx) => {
+        const isAvatarInTheme = currentTheme.avatarOptions.some((opt) => opt.icon === p.avatar);
+        if (!isAvatarInTheme) {
+          return {
+            ...p,
+            avatar: currentTheme.avatarOptions[idx % currentTheme.avatarOptions.length].icon,
+          };
+        }
+        return p;
+      })
+    );
+  }, [selectedThemeId]);
 
   const handlePlayerCountChange = (count: 1 | 2 | 3 | 4) => {
     setSettings((prev) => ({ ...prev, playerCount: count }));
@@ -160,6 +178,11 @@ export const SetupModal: React.FC<SetupModalProps> = ({
               <h1 className="text-2xl sm:text-3xl font-black tracking-tight drop-shadow-sm">NUMILAND</h1>
               <p className="text-xs sm:text-sm text-amber-100 font-medium">
                 Papan Interaktif Digital Numerasi (1 - 4 Pemain)
+              </p>
+              <p className="text-[11px] sm:text-xs text-amber-200/90 font-medium mt-0.5 flex items-center gap-1">
+                <span>✨ Pembuat:</span>
+                <strong className="text-white font-bold">Indra Tata</strong>
+                <span className="text-amber-200/80">(berbantuan AI)</span>
               </p>
             </div>
           </div>
@@ -568,6 +591,9 @@ export const SetupModal: React.FC<SetupModalProps> = ({
         <div className="p-4 sm:p-5 bg-slate-950/80 border-t border-slate-800 flex items-center justify-between">
           <div className="text-xs text-slate-400 hidden sm:block">
             Papan Digital Siap: <strong className="text-amber-400">{selectedTheme.name}</strong> ({settings.playerCount} Pemain)
+            <div className="text-[10px] text-slate-500 font-medium mt-0.5">
+              Dibuat oleh <strong className="text-slate-300">Indra Tata</strong> berbantuan AI
+            </div>
           </div>
 
           <div className="flex items-center gap-3 w-full sm:w-auto justify-end">

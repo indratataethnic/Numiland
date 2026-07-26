@@ -375,7 +375,12 @@ export const GameBoard: React.FC<GameBoardProps> = ({ theme, players, targetStep
 
         {/* THEME 6: MENGISI AIR AJAIB (Water Container Fill) */}
         {theme.boardType === 'water_container' && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 h-[220px] sm:h-[250px] items-end">
+          <div className={`grid gap-3 sm:gap-4 items-end justify-center py-2 ${
+            players.length === 1 ? 'grid-cols-1 max-w-xs mx-auto' :
+            players.length === 2 ? 'grid-cols-2 max-w-md mx-auto' :
+            players.length === 3 ? 'grid-cols-3 max-w-2xl mx-auto' :
+            'grid-cols-2 sm:grid-cols-4'
+          }`}>
             {players.map((p) => {
               const progressPct = Math.min(100, Math.round((p.position / targetSteps) * 100));
               const stageIdx = Math.min(4, Math.floor((p.position / targetSteps) * 5));
@@ -383,61 +388,93 @@ export const GameBoard: React.FC<GameBoardProps> = ({ theme, players, targetStep
               return (
                 <div
                   key={p.id}
-                  className="bg-cyan-950/40 p-2.5 sm:p-3 rounded-2xl border border-cyan-800/80 flex flex-col items-center justify-between h-full relative overflow-hidden shadow-inner"
+                  className="relative bg-slate-950/85 p-3 rounded-2xl border-2 border-cyan-800/80 shadow-2xl flex flex-col items-center justify-between transition-all"
                 >
-                  {/* Player Tag */}
-                  <div className="flex items-center gap-1 text-xs font-bold text-cyan-200 z-10 w-full justify-between bg-slate-950/70 px-2 py-1 rounded-xl border border-cyan-900/60">
-                    <div className="flex items-center gap-1 truncate">
-                      <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: p.color }} />
-                      <span className="truncate max-w-[65px]">{p.name}</span>
-                    </div>
-                    <span className="text-[11px] text-cyan-400 font-mono font-extrabold">{p.position} / {targetSteps}</span>
-                  </div>
-
-                  {/* Water Tank Vessel */}
-                  <div className="relative w-full flex-1 my-2 bg-slate-950/90 rounded-2xl border-2 border-cyan-500/40 overflow-hidden flex flex-col justify-end p-1 shadow-inner">
-                    {/* Floating Avatar or Water Drop on top */}
-                    <div
-                      className="absolute left-1/2 -translate-x-1/2 transition-all duration-700 ease-out z-20 flex flex-col items-center pointer-events-none"
-                      style={{
-                        bottom: `calc(${Math.min(88, Math.max(10, progressPct))}% - 14px)`,
-                      }}
-                    >
-                      <span className="text-2xl filter drop-shadow-[0_2px_6px_rgba(6,182,212,0.8)] animate-bounce">
-                        {p.avatar}
+                  {/* Player Header & Stage Label */}
+                  <div className="w-full flex flex-col items-center gap-1 mb-2">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-sm" style={{ backgroundColor: p.color }} />
+                      <span className="text-white font-black text-xs sm:text-sm truncate max-w-[100px] sm:max-w-[120px]">
+                        {p.name}
                       </span>
                     </div>
-
-                    {/* Animated Water Liquid Fill */}
-                    <div
-                      className="w-full bg-gradient-to-t from-blue-700 via-cyan-500 to-sky-300 rounded-xl transition-all duration-700 ease-out relative shadow-lg flex flex-col justify-between overflow-hidden"
-                      style={{ height: `${Math.max(8, progressPct)}%` }}
-                    >
-                      {/* Water Wave Ripple Effect */}
-                      <div className="w-full h-2 bg-white/40 animate-pulse" />
-
-                      {/* Floating Bubbles */}
-                      {progressPct >= 20 && (
-                        <div className="absolute inset-0 flex justify-around items-end opacity-60 pointer-events-none">
-                          <span className="text-[10px] animate-bounce delay-100">🫧</span>
-                          <span className="text-[12px] animate-bounce delay-300">💧</span>
-                          <span className="text-[10px] animate-bounce delay-200">🫧</span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Fill Percentage Text Overlay */}
-                    <div className="absolute inset-x-0 bottom-2 text-center z-10">
-                      <span className="text-[10px] font-black text-white bg-slate-950/80 px-2 py-0.5 rounded-full border border-cyan-400/50 shadow-md">
-                        💧 {progressPct}%
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Water Status Badge */}
-                  <div className="w-full bg-slate-950/80 rounded-xl py-0.5 px-2 text-center border border-cyan-900 z-10">
-                    <span className="text-[10px] text-cyan-300 font-bold block truncate">
+                    <span className="text-[10px] sm:text-[11px] font-bold text-cyan-300 bg-cyan-950/80 px-2.5 py-0.5 rounded-md border border-cyan-800/50">
                       {theme.stepLabels?.[stageIdx] || `Terisi ${progressPct}%`}
+                    </span>
+                  </div>
+
+                  {/* Vertical Water Tank Container */}
+                  <div className="relative flex flex-col items-center my-1">
+                    {/* Top Water Faucet / Spout */}
+                    <div className="w-full flex items-center justify-between px-2 bg-slate-900/90 py-1 rounded-t-xl border-t-2 border-x-2 border-cyan-500/50 z-10">
+                      <span className="text-xs font-bold text-cyan-300 flex items-center gap-1">
+                        🚰 Kran Air
+                      </span>
+                      <span className="text-[10px] font-extrabold text-sky-400 animate-pulse">
+                        💧 Kucuran
+                      </span>
+                    </div>
+
+                    {/* Main Water Vessel */}
+                    <div className="relative w-28 sm:w-32 h-56 sm:h-64 bg-slate-900/95 rounded-b-2xl border-x-4 border-b-4 border-cyan-500/70 p-1.5 flex flex-col justify-end overflow-hidden shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                      {/* Graduation Marks (25%, 50%, 75%) */}
+                      <div className="absolute inset-x-0 bottom-[75%] border-b border-cyan-400/30 flex items-center justify-end pr-1.5 pointer-events-none z-10">
+                        <span className="text-[9px] font-extrabold text-cyan-300/60">75%</span>
+                      </div>
+                      <div className="absolute inset-x-0 bottom-[50%] border-b border-cyan-400/30 flex items-center justify-end pr-1.5 pointer-events-none z-10">
+                        <span className="text-[9px] font-extrabold text-cyan-300/60">50%</span>
+                      </div>
+                      <div className="absolute inset-x-0 bottom-[25%] border-b border-cyan-400/30 flex items-center justify-end pr-1.5 pointer-events-none z-10">
+                        <span className="text-[9px] font-extrabold text-cyan-300/60">25%</span>
+                      </div>
+
+                      {/* Animated Water Liquid Fill (Bottom to Top) */}
+                      <div
+                        className="w-full bg-gradient-to-t from-blue-700 via-cyan-500 to-sky-300 rounded-xl transition-all duration-700 ease-out relative shadow-[0_0_20px_rgba(6,182,212,0.6)] flex flex-col justify-between overflow-hidden"
+                        style={{ height: `${Math.max(8, progressPct)}%` }}
+                      >
+                        {/* Surface Wave Effect */}
+                        <div className="w-full h-1.5 bg-white/70 animate-pulse shadow-[0_0_8px_#ffffff]" />
+
+                        {/* Floating Bubbles & Water Drops */}
+                        {progressPct >= 15 && (
+                          <div className="flex justify-around items-end opacity-70 pointer-events-none pb-1">
+                            <span className="text-[10px] animate-bounce delay-100">🫧</span>
+                            <span className="text-[12px] animate-pulse delay-300">💧</span>
+                            <span className="text-[10px] animate-bounce delay-200">🫧</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Floating Player Avatar on Water Level */}
+                      <div
+                        className="absolute inset-x-1 transition-all duration-700 ease-out z-30 flex items-center justify-center pointer-events-none"
+                        style={{
+                          bottom: `calc(${Math.min(88, Math.max(6, progressPct))}% - 14px)`,
+                        }}
+                      >
+                        <div
+                          className="flex items-center gap-1 bg-slate-950/95 border-2 rounded-xl px-2 py-0.5 shadow-2xl"
+                          style={{ borderColor: p.color }}
+                        >
+                          <span className="text-xl animate-bounce">{p.avatar}</span>
+                          <span className="text-[10px] font-black text-cyan-400">💧</span>
+                        </div>
+                      </div>
+
+                      {/* Center Overlay Text showing Percentage */}
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+                        <span className="text-[11px] sm:text-xs font-black text-white bg-slate-950/85 px-2 py-1 rounded-full border border-cyan-400/60 shadow-lg text-center">
+                          {progressPct === 100 ? '🌊 100% MELUAP' : `💧 ${progressPct}% TERISI`}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Footer Score Stats */}
+                  <div className="w-full text-center mt-2 pt-1 border-t border-slate-800/80">
+                    <span className="text-xs font-extrabold text-cyan-300">
+                      {p.position} / {targetSteps} Poin
                     </span>
                   </div>
                 </div>

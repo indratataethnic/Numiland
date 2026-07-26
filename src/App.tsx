@@ -432,6 +432,11 @@ export default function App() {
           </div>
         )}
       </main>
+
+      {/* Global Footer Attribution */}
+      <footer className="w-full text-center py-1.5 text-[11px] text-slate-400 bg-slate-950/90 border-t border-slate-800/80 shrink-0 select-none z-20">
+        <span>✨ Numiland — Pembuat: <strong className="text-amber-300 font-bold">Indra Tata</strong> (berbantuan AI)</span>
+      </footer>
     </div>
   );
 }

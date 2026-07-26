@@ -114,9 +114,9 @@ export const THEMES: Record<ThemeId, ThemeConfig> = {
     description: 'Kumpulkan kucuran air dengan setiap jawaban benar! Semakin banyak soal dipecahkan, ember dan bak airmu akan terisi penuh hingga meluap!',
     avatarOptions: [
       { id: 'water_drop', name: 'Tetes Air', icon: '💧', color: 'bg-cyan-400' },
-      { id: 'blue_bucket', name: 'Ember Air', icon: '🪣', color: 'bg-blue-500' },
-      { id: 'faucet', name: 'Kran Air', icon: '🚰', color: 'bg-indigo-500' },
-      { id: 'water_wave', name: 'Ombak Ajaib', icon: '🌊', color: 'bg-teal-400' },
+      { id: 'rubber_duck', name: 'Bebek Karet', icon: '🐥', color: 'bg-yellow-400' },
+      { id: 'water_whale', name: 'Paus Cilik', icon: '🐳', color: 'bg-blue-500' },
+      { id: 'sail_boat', name: 'Perahu Kapal', icon: '⛵', color: 'bg-sky-400' },
     ],
     stepLabels: ['Ember Kosong', 'Terisi Seperempat', 'Setengah Penuh', 'Hampir Penuh', 'Penuh Meluap! 🌊'],
   },

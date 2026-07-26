@@ -41,6 +41,9 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           <span className="text-lg sm:text-xl">🔢</span>
           <span>NUMILAND</span>
         </div>
+        <div className="hidden xl:flex items-center gap-1.5 text-[11px] text-slate-300 font-medium bg-slate-800/80 px-2.5 py-1 rounded-lg border border-slate-700/60">
+          <span>✨ Oleh: <strong className="text-amber-300">Indra Tata</strong> (berbantuan AI)</span>
+        </div>
         <div className="hidden lg:flex items-center gap-2 bg-slate-800/80 px-3 py-1 rounded-lg border border-slate-700 text-xs sm:text-sm font-medium">
           <span>{theme.emoji}</span>
           <span className="text-slate-200">{theme.name}</span>
