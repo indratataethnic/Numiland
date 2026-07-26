@@ -31,13 +31,43 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
   const winner = sortedPlayers[0];
 
   useEffect(() => {
-    // Trigger confetti shower & victory sound
+    // Trigger victory sound & rich multi-burst confetti shower
     audio.playVictory();
+
+    const duration = 3000;
+    const end = Date.now() + duration;
+
+    // Initial big burst
     confetti({
-      particleCount: 100,
-      spread: 70,
+      particleCount: 120,
+      spread: 90,
       origin: { y: 0.6 },
+      colors: ['#f59e0b', '#10b981', '#3b82f6', '#ec4899', '#8b5cf6'],
     });
+
+    // Side cannon blasts interval
+    const interval: any = setInterval(() => {
+      const timeLeft = end - Date.now();
+      if (timeLeft <= 0) {
+        return clearInterval(interval);
+      }
+      const particleCount = 50 * (timeLeft / duration);
+      
+      confetti({
+        particleCount,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0, y: 0.7 },
+        colors: ['#fbbf24', '#34d399', '#60a5fa', '#f472b6'],
+      });
+      confetti({
+        particleCount,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1, y: 0.7 },
+        colors: ['#fbbf24', '#34d399', '#60a5fa', '#f472b6'],
+      });
+    }, 250);
 
     // Fetch AI Coach Summary
     const fetchAiCoach = async () => {

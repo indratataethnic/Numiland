@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { GameSettings, GradeLevel, MathOperation, PlayerState, ThemeId } from '../types';
 import { THEMES } from '../data/themes';
-import { Play, Users, Sparkles, Check, ChevronRight } from 'lucide-react';
+import { Play, Users, Sparkles, Check, ChevronRight, GraduationCap } from 'lucide-react';
 
 interface SetupModalProps {
   initialSettings: GameSettings;
@@ -25,7 +25,13 @@ export const SetupModal: React.FC<SetupModalProps> = ({
   isInitialSetup = false,
 }) => {
   const [settings, setSettings] = useState<GameSettings>(initialSettings);
-  const [activeTab, setActiveTab] = useState<'theme' | 'rules' | 'players'>('theme');
+  const [activeTab, setActiveTab] = useState<'rules' | 'theme' | 'players'>('rules');
+  const [globalGradeLevel, setGlobalGradeLevel] = useState<GradeLevel>(
+    initialPlayers[0]?.gradeLevel || 'kelas1-2'
+  );
+  const [globalOperations, setGlobalOperations] = useState<MathOperation[]>(
+    initialPlayers[0]?.operations || ['addition', 'subtraction']
+  );
 
   // Players state
   const [playerConfigs, setPlayerConfigs] = useState<
@@ -64,22 +70,47 @@ export const SetupModal: React.FC<SetupModalProps> = ({
   const [selectedThemeId, setSelectedThemeId] = useState<ThemeId>(settings.themeId);
   const selectedTheme = THEMES[selectedThemeId];
 
-  const handlePlayerCountChange = (count: 2 | 3 | 4) => {
+  const handlePlayerCountChange = (count: 1 | 2 | 3 | 4) => {
     setSettings((prev) => ({ ...prev, playerCount: count }));
   };
 
-  const handleOperationToggle = (pIdx: number, op: MathOperation) => {
-    setPlayerConfigs((prev) => {
-      const updated = [...prev];
-      const p = { ...updated[pIdx] };
-      if (p.operations.includes(op)) {
-        if (p.operations.length > 1) {
-          p.operations = p.operations.filter((o) => o !== op);
+  const handleGlobalGradeChange = (newGrade: GradeLevel) => {
+    setGlobalGradeLevel(newGrade);
+
+    let defaultOps: MathOperation[] = ['addition', 'subtraction'];
+    if (newGrade === 'kelas3-4') {
+      defaultOps = ['addition', 'subtraction', 'multiplication'];
+    } else if (newGrade === 'kelas5-6') {
+      defaultOps = ['addition', 'subtraction', 'multiplication', 'division'];
+    } else if (newGrade === 'adaptive') {
+      defaultOps = ['addition', 'subtraction', 'multiplication'];
+    }
+
+    setGlobalOperations(defaultOps);
+    setPlayerConfigs((prev) =>
+      prev.map((p) => ({
+        ...p,
+        gradeLevel: newGrade,
+        operations: defaultOps,
+      }))
+    );
+  };
+
+  const handleGlobalOperationToggle = (op: MathOperation) => {
+    setGlobalOperations((prev) => {
+      let updated: MathOperation[];
+      if (prev.includes(op)) {
+        if (prev.length > 1) {
+          updated = prev.filter((o) => o !== op);
+        } else {
+          updated = prev;
         }
       } else {
-        p.operations = [...p.operations, op];
+        updated = [...prev, op];
       }
-      updated[pIdx] = p;
+      setPlayerConfigs((pConfigs) =>
+        pConfigs.map((p) => ({ ...p, operations: updated }))
+      );
       return updated;
     });
   };
@@ -94,7 +125,7 @@ export const SetupModal: React.FC<SetupModalProps> = ({
         color: colorScheme.color,
         bgGradient: colorScheme.bg,
         accentColor: colorScheme.accent,
-        gradeLevel: p.gradeLevel,
+        gradeLevel: globalGradeLevel,
         operations: p.operations,
         position: 0,
         stats: {
@@ -128,7 +159,7 @@ export const SetupModal: React.FC<SetupModalProps> = ({
             <div>
               <h1 className="text-2xl sm:text-3xl font-black tracking-tight drop-shadow-sm">NUMILAND</h1>
               <p className="text-xs sm:text-sm text-amber-100 font-medium">
-                Papan Interaktif Digital Numerasi (2 - 4 Pemain Serentak)
+                Papan Interaktif Digital Numerasi (1 - 4 Pemain)
               </p>
             </div>
           </div>
@@ -140,32 +171,32 @@ export const SetupModal: React.FC<SetupModalProps> = ({
         {/* Navigation Tabs */}
         <div className="flex border-b border-slate-800 bg-slate-950/40 p-2 gap-2">
           <button
-            onClick={() => setActiveTab('theme')}
-            className={`flex-1 py-2.5 px-4 rounded-xl text-sm font-bold transition flex items-center justify-center gap-2 cursor-pointer ${
-              activeTab === 'theme'
-                ? 'bg-amber-500 text-slate-950 shadow-md'
-                : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-            }`}
-          >
-            <span>🎨</span>
-            <span>1. Pilihan Tema</span>
-          </button>
-
-          <button
             onClick={() => setActiveTab('rules')}
-            className={`flex-1 py-2.5 px-4 rounded-xl text-sm font-bold transition flex items-center justify-center gap-2 cursor-pointer ${
+            className={`flex-1 py-2.5 px-3 sm:px-4 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center gap-2 cursor-pointer ${
               activeTab === 'rules'
                 ? 'bg-amber-500 text-slate-950 shadow-md'
                 : 'text-slate-400 hover:bg-slate-800 hover:text-white'
             }`}
           >
             <span>🎯</span>
-            <span>2. Aturan & Mode</span>
+            <span>1. Aturan & Mode</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('theme')}
+            className={`flex-1 py-2.5 px-3 sm:px-4 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center gap-2 cursor-pointer ${
+              activeTab === 'theme'
+                ? 'bg-amber-500 text-slate-950 shadow-md'
+                : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+            }`}
+          >
+            <span>🎨</span>
+            <span>2. Pilihan Tema</span>
           </button>
 
           <button
             onClick={() => setActiveTab('players')}
-            className={`flex-1 py-2.5 px-4 rounded-xl text-sm font-bold transition flex items-center justify-center gap-2 cursor-pointer ${
+            className={`flex-1 py-2.5 px-3 sm:px-4 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center gap-2 cursor-pointer ${
               activeTab === 'players'
                 ? 'bg-amber-500 text-slate-950 shadow-md'
                 : 'text-slate-400 hover:bg-slate-800 hover:text-white'
@@ -178,7 +209,204 @@ export const SetupModal: React.FC<SetupModalProps> = ({
 
         {/* Tab Content Area */}
         <div className="p-5 sm:p-6 overflow-y-auto flex-1 text-slate-200">
-          {/* TAB 1: THEME SELECTION */}
+          {/* TAB 1: RULES & MODE (Including Global Grade Level) */}
+          {activeTab === 'rules' && (
+            <div className="space-y-6">
+              {/* Grade / Class Selection (Chosen ONCE globally) */}
+              <div>
+                <label className="block text-sm font-bold text-white mb-1.5 flex items-center gap-2">
+                  <GraduationCap className="w-4 h-4 text-amber-400" />
+                  <span>Pemilihan Kelas / Fase SD (Pilih 1 Kali):</span>
+                </label>
+                <p className="text-xs text-slate-400 mb-3">
+                  Pilihan tingkat kesulitan ini berlaku otomatis untuk seluruh pemain di permainan.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {[
+                    {
+                      id: 'kelas1-2',
+                      title: '👶 Kelas 1 - 2 (Fase A)',
+                      desc: 'Penjumlahan & Pengurangan (1 - 20) + Petunjuk Visual Emoji',
+                    },
+                    {
+                      id: 'kelas3-4',
+                      title: '👦 Kelas 3 - 4 (Fase B)',
+                      desc: 'Penjumlahan, Pengurangan (1 - 100) & Perkalian Dasar',
+                    },
+                    {
+                      id: 'kelas5-6',
+                      title: '🎓 Kelas 5 - 6 (Fase C)',
+                      desc: 'Perkalian, Pembagian & Operasi Hitung Ratusan',
+                    },
+                    {
+                      id: 'adaptive',
+                      title: '⚡ Dinamis / Adaptif',
+                      desc: 'Tingkat kesulitan menyesuaikan otomatis berdasarkan streak',
+                    },
+                  ].map((g) => {
+                    const isSelected = globalGradeLevel === g.id;
+                    return (
+                      <button
+                        key={g.id}
+                        type="button"
+                        onClick={() => handleGlobalGradeChange(g.id as GradeLevel)}
+                        className={`p-3 sm:p-3.5 rounded-2xl border-2 text-left transition flex items-start gap-3 cursor-pointer ${
+                          isSelected
+                            ? 'border-amber-400 bg-amber-500/15 text-white ring-1 ring-amber-400/50'
+                            : 'border-slate-800 bg-slate-900/80 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                        }`}
+                      >
+                        <div
+                          className={`mt-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                            isSelected ? 'border-amber-400 bg-amber-400' : 'border-slate-600'
+                          }`}
+                        >
+                          {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-slate-950" />}
+                        </div>
+                        <div>
+                          <div className={`font-bold text-sm ${isSelected ? 'text-amber-300' : 'text-white'}`}>
+                            {g.title}
+                          </div>
+                          <div className="text-xs text-slate-400 mt-0.5">{g.desc}</div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Math Operations Selection */}
+              <div>
+                <label className="block text-sm font-bold text-white mb-1.5 flex items-center gap-2">
+                  <span>🧮</span>
+                  <span>Opsi Operasi Hitung (Berlaku Semua Pemain):</span>
+                </label>
+                <p className="text-xs text-slate-400 mb-2.5">
+                  Pilih jenis operasi hitung matematika yang akan diikutsertakan dalam soal permainan.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  {[
+                    { id: 'addition', label: '➕ Penjumlahan', desc: 'Soal Tambah' },
+                    { id: 'subtraction', label: '➖ Pengurangan', desc: 'Soal Kurang' },
+                    { id: 'multiplication', label: '✖️ Perkalian', desc: 'Soal Perkalian' },
+                    { id: 'division', label: '➗ Pembagian', desc: 'Soal Pembagian' },
+                  ].map((op) => {
+                    const active = globalOperations.includes(op.id as MathOperation);
+                    return (
+                      <button
+                        key={op.id}
+                        type="button"
+                        onClick={() => handleGlobalOperationToggle(op.id as MathOperation)}
+                        className={`p-3 rounded-2xl border-2 text-left transition cursor-pointer flex flex-col justify-between ${
+                          active
+                            ? 'border-amber-400 bg-amber-500/15 text-white ring-1 ring-amber-400/50'
+                            : 'border-slate-800 bg-slate-900/80 text-slate-500 hover:border-slate-700'
+                        }`}
+                      >
+                        <div className={`font-bold text-sm ${active ? 'text-amber-300' : 'text-slate-400'}`}>
+                          {op.label}
+                        </div>
+                        <div className="text-[11px] text-slate-400 mt-1">{op.desc}</div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Player Count */}
+              <div>
+                <label className="block text-sm font-bold text-white mb-2 flex items-center gap-2">
+                  <Users className="w-4 h-4 text-amber-400" />
+                  <span>Jumlah Pemain di Papan Digital:</span>
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  {[1, 2, 3, 4].map((num) => (
+                    <button
+                      key={num}
+                      type="button"
+                      onClick={() => handlePlayerCountChange(num as 1 | 2 | 3 | 4)}
+                      className={`py-3 px-3 rounded-xl border-2 font-bold text-sm transition flex items-center justify-center gap-2 cursor-pointer ${
+                        settings.playerCount === num
+                          ? 'border-amber-400 bg-amber-500/20 text-amber-300 shadow-md'
+                          : 'border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700 hover:text-white'
+                      }`}
+                    >
+                      <span className="text-lg">{num === 1 ? '👤' : '👥'}</span>
+                      <span>{num === 1 ? '1 Pemain (Solo)' : `${num} Pemain`}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Target Steps */}
+              <div>
+                <label className="block text-sm font-bold text-white mb-2 flex items-center gap-2">
+                  <span>🚩</span>
+                  <span>Panjang Lintasan / Target Langkah Menang:</span>
+                </label>
+                <div className="grid grid-cols-4 gap-3">
+                  {[15, 20, 25, 30].map((steps) => (
+                    <button
+                      key={steps}
+                      type="button"
+                      onClick={() => setSettings((prev) => ({ ...prev, targetSteps: steps }))}
+                      className={`py-2.5 px-3 rounded-xl border font-bold text-sm transition flex flex-col items-center justify-center cursor-pointer ${
+                        settings.targetSteps === steps
+                          ? 'border-amber-400 bg-amber-500/20 text-amber-300'
+                          : 'border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700'
+                      }`}
+                    >
+                      <span className="text-base font-extrabold">{steps}</span>
+                      <span className="text-[10px] text-slate-400">Langkah</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Input Type */}
+              <div>
+                <label className="block text-sm font-bold text-white mb-2 flex items-center gap-2">
+                  <span>⌨️</span>
+                  <span>Mekanisme Input Jawaban:</span>
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setSettings((prev) => ({ ...prev, inputType: 'numpad' }))}
+                    className={`p-3 rounded-xl border-2 font-medium text-left transition cursor-pointer flex items-center gap-3 ${
+                      settings.inputType === 'numpad'
+                        ? 'border-amber-400 bg-amber-500/15 text-white'
+                        : 'border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700'
+                    }`}
+                  >
+                    <div className="text-2xl">🔢</div>
+                    <div>
+                      <div className="font-bold text-sm text-white">Numpad Touch Pad</div>
+                      <div className="text-xs text-slate-400">Ketik angka 0-9 langsung di layar (Latihan Berhitung)</div>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setSettings((prev) => ({ ...prev, inputType: 'multiple_choice' }))}
+                    className={`p-3 rounded-xl border-2 font-medium text-left transition cursor-pointer flex items-center gap-3 ${
+                      settings.inputType === 'multiple_choice'
+                        ? 'border-amber-400 bg-amber-500/15 text-white'
+                        : 'border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700'
+                    }`}
+                  >
+                    <div className="text-2xl">🔘</div>
+                    <div>
+                      <div className="font-bold text-sm text-white">Pilihan Ganda (4 Opsi)</div>
+                      <div className="text-xs text-slate-400">Pilih salah satu dari 4 opsi angka (Respon Cepat)</div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 2: THEME SELECTION */}
           {activeTab === 'theme' && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -246,105 +474,23 @@ export const SetupModal: React.FC<SetupModalProps> = ({
             </div>
           )}
 
-          {/* TAB 2: RULES & MODE */}
-          {activeTab === 'rules' && (
-            <div className="space-y-6">
-              {/* Player Count */}
-              <div>
-                <label className="block text-sm font-bold text-white mb-2 flex items-center gap-2">
-                  <Users className="w-4 h-4 text-amber-400" />
-                  <span>Jumlah Pemain di Papan Digital:</span>
-                </label>
-                <div className="grid grid-cols-3 gap-3">
-                  {[2, 3, 4].map((num) => (
-                    <button
-                      key={num}
-                      onClick={() => handlePlayerCountChange(num as 2 | 3 | 4)}
-                      className={`py-3 px-4 rounded-xl border-2 font-bold text-base transition flex items-center justify-center gap-2 cursor-pointer ${
-                        settings.playerCount === num
-                          ? 'border-amber-400 bg-amber-500/20 text-amber-300 shadow-md'
-                          : 'border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700 hover:text-white'
-                      }`}
-                    >
-                      <span className="text-xl">👥</span>
-                      <span>{num} Pemain</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Target Steps */}
-              <div>
-                <label className="block text-sm font-bold text-white mb-2 flex items-center gap-2">
-                  <span>🚩</span>
-                  <span>Panjang Lintasan / Target Langkah Menang:</span>
-                </label>
-                <div className="grid grid-cols-4 gap-3">
-                  {[15, 20, 25, 30].map((steps) => (
-                    <button
-                      key={steps}
-                      onClick={() => setSettings((prev) => ({ ...prev, targetSteps: steps }))}
-                      className={`py-2.5 px-3 rounded-xl border font-bold text-sm transition flex flex-col items-center justify-center cursor-pointer ${
-                        settings.targetSteps === steps
-                          ? 'border-amber-400 bg-amber-500/20 text-amber-300'
-                          : 'border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700'
-                      }`}
-                    >
-                      <span className="text-base font-extrabold">{steps}</span>
-                      <span className="text-[10px] text-slate-400">Langkah</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Input Type */}
-              <div>
-                <label className="block text-sm font-bold text-white mb-2 flex items-center gap-2">
-                  <span>⌨️</span>
-                  <span>Mekanisme Input Jawaban:</span>
-                </label>
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    onClick={() => setSettings((prev) => ({ ...prev, inputType: 'numpad' }))}
-                    className={`p-3 rounded-xl border-2 font-medium text-left transition cursor-pointer flex items-center gap-3 ${
-                      settings.inputType === 'numpad'
-                        ? 'border-amber-400 bg-amber-500/15 text-white'
-                        : 'border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700'
-                    }`}
-                  >
-                    <div className="text-2xl">🔢</div>
-                    <div>
-                      <div className="font-bold text-sm text-white">Numpad Touch Pad</div>
-                      <div className="text-xs text-slate-400">Ketik angka 0-9 langsung di layar (Latihan Berhitung)</div>
-                    </div>
-                  </button>
-
-                  <button
-                    onClick={() => setSettings((prev) => ({ ...prev, inputType: 'multiple_choice' }))}
-                    className={`p-3 rounded-xl border-2 font-medium text-left transition cursor-pointer flex items-center gap-3 ${
-                      settings.inputType === 'multiple_choice'
-                        ? 'border-amber-400 bg-amber-500/15 text-white'
-                        : 'border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700'
-                    }`}
-                  >
-                    <div className="text-2xl">🔘</div>
-                    <div>
-                      <div className="font-bold text-sm text-white">Pilihan Ganda (4 Opsi)</div>
-                      <div className="text-xs text-slate-400">Pilih salah satu dari 4 opsi angka (Respon Cepat)</div>
-                    </div>
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 3: PLAYER CONFIG & DIFFICULTY */}
+          {/* TAB 3: PLAYER CONFIG & CUSTOMIZATION */}
           {activeTab === 'players' && (
             <div className="space-y-4">
               <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 text-xs text-amber-300 flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
                 <span>
-                  <strong>Kemampuan Dinamis:</strong> Tingkat kesulitan dan jenis operasi matematika dapat disesuaikan untuk masing-masing siswa!
+                  <strong>Karakter Pemain:</strong> Sesuaikan nama dan ikon avatar untuk masing-masing pemain (Kelas Terpilih:{' '}
+                  <strong className="text-white">
+                    {globalGradeLevel === 'kelas1-2'
+                      ? 'Kelas 1 - 2'
+                      : globalGradeLevel === 'kelas3-4'
+                      ? 'Kelas 3 - 4'
+                      : globalGradeLevel === 'kelas5-6'
+                      ? 'Kelas 5 - 6'
+                      : 'Dinamis / Adaptif'}
+                  </strong>
+                  ).
                 </span>
               </div>
 
@@ -373,12 +519,13 @@ export const SetupModal: React.FC<SetupModalProps> = ({
                       </div>
 
                       {/* Name input & Avatar selector */}
-                      <div className="flex items-center gap-3">
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                         {/* Avatar Pick */}
-                        <div className="flex gap-1.5 bg-slate-900 p-1.5 rounded-xl border border-slate-700">
+                        <div className="flex gap-1.5 bg-slate-900 p-1.5 rounded-xl border border-slate-700 justify-around sm:justify-start">
                           {themeAvatars.map((a) => (
                             <button
                               key={a.id}
+                              type="button"
                               onClick={() => {
                                 const updated = [...playerConfigs];
                                 updated[pIdx].avatar = a.icon;
@@ -409,57 +556,6 @@ export const SetupModal: React.FC<SetupModalProps> = ({
                           className="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-semibold focus:outline-none focus:border-amber-400"
                         />
                       </div>
-
-                      {/* Grade Level Selection */}
-                      <div>
-                        <label className="block text-[11px] font-bold text-slate-300 mb-1">
-                          Tingkat Kesulitan / Kelas SD:
-                        </label>
-                        <select
-                          value={player.gradeLevel}
-                          onChange={(e) => {
-                            const updated = [...playerConfigs];
-                            updated[pIdx].gradeLevel = e.target.value as GradeLevel;
-                            setPlayerConfigs(updated);
-                          }}
-                          className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-amber-300 font-medium focus:outline-none focus:border-amber-400"
-                        >
-                          <option value="kelas1-2">👶 Kelas 1 - 2 (Pemula: Penjumlahan/Pengurangan 1-20)</option>
-                          <option value="kelas3-4">👦 Kelas 3 - 4 (Menengah: Penjumlahan/Pengurangan 1-100 & Perkalian)</option>
-                          <option value="kelas5-6">🎓 Kelas 5 - 6 (Mahir: Perkalian, Pembagian, Operasi Ratusan)</option>
-                          <option value="adaptive">⚡ Dinamis / Adaptif (Menyesuaikan Otomatis Sesuai Streak)</option>
-                        </select>
-                      </div>
-
-                      {/* Operations Checkboxes */}
-                      <div>
-                        <label className="block text-[11px] font-bold text-slate-300 mb-1">
-                          Operasi Hitung Aktif:
-                        </label>
-                        <div className="flex flex-wrap gap-1.5">
-                          {[
-                            { id: 'addition', label: '➕ Tambah' },
-                            { id: 'subtraction', label: '➖ Kurang' },
-                            { id: 'multiplication', label: '✖️ Kali' },
-                            { id: 'division', label: '➗ Bagi' },
-                          ].map((op) => {
-                            const active = player.operations.includes(op.id as MathOperation);
-                            return (
-                              <button
-                                key={op.id}
-                                onClick={() => handleOperationToggle(pIdx, op.id as MathOperation)}
-                                className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition cursor-pointer ${
-                                  active
-                                    ? 'bg-amber-500/20 border-amber-400 text-amber-300'
-                                    : 'bg-slate-900 border-slate-700 text-slate-500'
-                                }`}
-                              >
-                                {op.label}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
                     </div>
                   );
                 })}
@@ -477,7 +573,8 @@ export const SetupModal: React.FC<SetupModalProps> = ({
           <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
             {activeTab !== 'players' ? (
               <button
-                onClick={() => setActiveTab(activeTab === 'theme' ? 'rules' : 'players')}
+                type="button"
+                onClick={() => setActiveTab(activeTab === 'rules' ? 'theme' : 'players')}
                 className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm transition flex items-center gap-2 cursor-pointer"
               >
                 <span>Lanjut</span>
@@ -486,6 +583,7 @@ export const SetupModal: React.FC<SetupModalProps> = ({
             ) : null}
 
             <button
+              type="button"
               onClick={handleLaunchMatch}
               className="w-full sm:w-auto px-7 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-black text-base shadow-xl transition transform active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
             >

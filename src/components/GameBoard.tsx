@@ -270,49 +270,102 @@ export const GameBoard: React.FC<GameBoardProps> = ({ theme, players, targetStep
           </div>
         )}
 
-        {/* THEME 5: CLASH OF NUMBERS (RPG Battle) */}
-        {theme.boardType === 'rpg_battle' && (
-          <div className="space-y-3">
-            <div className="flex items-center justify-between bg-slate-950/80 p-3 rounded-2xl border border-rose-900/60">
-              <div className="flex items-center gap-2">
-                <span className="text-3xl">🧌</span>
-                <div>
-                  <div className="font-extrabold text-sm text-rose-300">Raja Monster Angka</div>
-                  <div className="text-[10px] text-slate-400">Tingkat Kesulitan RPG Arena</div>
-                </div>
-              </div>
-              <div className="flex items-center gap-1 bg-rose-950 px-2.5 py-1 rounded-xl border border-rose-800">
-                <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" />
-                <span className="text-xs font-bold text-white">Boss Arena</span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-              {players.map((p) => (
-                <div key={p.id} className="bg-slate-950/70 p-2.5 rounded-2xl border border-slate-800 text-center">
-                  <div className="text-3xl mb-1">{p.avatar}</div>
-                  <div className="text-xs font-bold text-white truncate">{p.name}</div>
-                  <div className="text-[10px] text-rose-400 font-bold mt-0.5">Power: {p.position * 10} HP</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* THEME 6: MATH CHEF */}
-        {theme.boardType === 'kitchen_counters' && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {/* THEME 5: MENERBANGKAN ROKET (Vertical Rocket Launch from Earth to Space) */}
+        {theme.boardType === 'rocket_sky' && (
+          <div className={`grid gap-3 sm:gap-4 items-end justify-center py-2 ${
+            players.length === 1 ? 'grid-cols-1 max-w-xs mx-auto' :
+            players.length === 2 ? 'grid-cols-2 max-w-md mx-auto' :
+            players.length === 3 ? 'grid-cols-3 max-w-2xl mx-auto' :
+            'grid-cols-2 sm:grid-cols-4'
+          }`}>
             {players.map((p) => {
-              const ordersCompleted = Math.floor(p.position / 3);
+              const progressPct = Math.min(100, Math.round((p.position / targetSteps) * 100));
+              const stageIdx = Math.min(4, Math.floor((p.position / targetSteps) * 5));
+              const altitudeKm = Math.round(p.position * 20); // e.g. 0 km to 600 km
+
               return (
-                <div key={p.id} className="bg-orange-950/40 p-3 rounded-2xl border border-orange-800/60 text-center">
-                  <div className="text-3xl mb-1">{p.avatar}</div>
-                  <div className="text-xs font-bold text-white truncate">{p.name}</div>
-                  <div className="my-2 text-2xl">
-                    {ordersCompleted >= 3 ? '🍔 🍕 🍣' : ordersCompleted >= 1 ? '🍔 🍕' : '🍔'}
+                <div
+                  key={p.id}
+                  className="relative bg-slate-950/85 p-3 rounded-2xl border-2 border-indigo-800/70 shadow-2xl flex flex-col items-center justify-between transition-all"
+                >
+                  {/* Player Header & Stage Label */}
+                  <div className="w-full flex flex-col items-center gap-1 mb-2">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-sm" style={{ backgroundColor: p.color }} />
+                      <span className="text-white font-black text-xs sm:text-sm truncate max-w-[100px] sm:max-w-[120px]">
+                        {p.name}
+                      </span>
+                    </div>
+                    <span className="text-[10px] sm:text-[11px] font-bold text-indigo-300 bg-indigo-950/80 px-2.5 py-0.5 rounded-md border border-indigo-700/50">
+                      {theme.stepLabels?.[stageIdx] || `Ketinggian ${progressPct}%`}
+                    </span>
                   </div>
-                  <div className="text-[10px] text-amber-300 font-bold">
-                    {ordersCompleted} Pesanan Selesai
+
+                  {/* Vertical Rocket Launch Chamber (Earth at bottom, Space at top) */}
+                  <div className="relative w-28 sm:w-32 h-60 sm:h-72 bg-[linear-gradient(to_top,#047857_0%,#0284c7_30%,#312e81_65%,#030712_100%)] rounded-2xl border-4 border-indigo-500/60 p-1.5 flex flex-col justify-between overflow-hidden shadow-[0_0_25px_rgba(99,102,241,0.25)]">
+                    {/* Top Goal: Outer Space & Stars (100%) */}
+                    <div className="w-full flex justify-between items-center px-1.5 text-[10px] sm:text-[11px] z-20 font-extrabold text-amber-300 bg-slate-950/80 py-0.5 rounded-md border border-indigo-500/40">
+                      <span>🌌 Angkasa</span>
+                      <span>🌟</span>
+                    </div>
+
+                    {/* Stage Altitude Markers on Wall */}
+                    <div className="absolute inset-x-0 bottom-[75%] border-b border-indigo-400/30 flex items-center justify-between px-1.5 pointer-events-none z-10 text-[8px] sm:text-[9px] font-bold text-indigo-200/60">
+                      <span>Stratosfer</span>
+                      <span>75%</span>
+                    </div>
+                    <div className="absolute inset-x-0 bottom-[50%] border-b border-sky-400/30 flex items-center justify-between px-1.5 pointer-events-none z-10 text-[8px] sm:text-[9px] font-bold text-sky-200/60">
+                      <span>Awan ☁️</span>
+                      <span>50%</span>
+                    </div>
+                    <div className="absolute inset-x-0 bottom-[25%] border-b border-emerald-400/30 flex items-center justify-between px-1.5 pointer-events-none z-10 text-[8px] sm:text-[9px] font-bold text-emerald-200/60">
+                      <span>Pohon 🌳</span>
+                      <span>25%</span>
+                    </div>
+
+                    {/* Launch Guide Track / Laser Beam */}
+                    <div className="absolute left-1/2 -translate-x-1/2 top-6 bottom-6 w-0.5 bg-indigo-400/30 border-l border-dashed border-indigo-300/50 pointer-events-none" />
+
+                    {/* Ascending Rocket Character Pod */}
+                    <div
+                      className="absolute left-1/2 -translate-x-1/2 transition-all duration-700 ease-out z-30 flex flex-col items-center pointer-events-none"
+                      style={{
+                        bottom: `calc(${Math.min(88, Math.max(5, progressPct))}% - 20px)`,
+                      }}
+                    >
+                      {/* Rocket Pod Container */}
+                      <div
+                        className="flex items-center gap-1 bg-slate-950/90 border-2 rounded-2xl px-2 py-1 shadow-2xl backdrop-blur-sm relative"
+                        style={{ borderColor: p.color }}
+                      >
+                        <span className="text-2xl sm:text-3xl animate-pulse">{p.avatar}</span>
+                      </div>
+
+                      {/* Animated Thruster Flame & Smoke Trail */}
+                      <div className="flex flex-col items-center -mt-1">
+                        <span className="text-xs animate-bounce">🔥</span>
+                        <div className="flex items-center gap-0.5 text-[8px] text-amber-300/80 -mt-1">
+                          <span className="animate-ping delay-100">💨</span>
+                          <span className="animate-pulse delay-200">✨</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Bottom Base: Earth / Children's Home (0%) */}
+                    <div className="w-full flex justify-between items-center px-1.5 text-[10px] z-20 font-black text-emerald-200 bg-emerald-950/90 py-1 rounded-md border border-emerald-700/60">
+                      <span className="flex items-center gap-1">🏡 🌍 Bumi</span>
+                      <span>0 km</span>
+                    </div>
+                  </div>
+
+                  {/* Footer Altitude Km & Score */}
+                  <div className="w-full text-center mt-2 pt-1 border-t border-slate-800/80 flex items-center justify-center gap-1 text-xs">
+                    <span className="text-indigo-300 font-extrabold">
+                      🚀 {altitudeKm} KM
+                    </span>
+                    <span className="text-slate-400 text-[11px]">
+                      ({p.position}/{targetSteps})
+                    </span>
                   </div>
                 </div>
               );
@@ -320,18 +373,183 @@ export const GameBoard: React.FC<GameBoardProps> = ({ theme, players, targetStep
           </div>
         )}
 
-        {/* THEME 7: PLANET DEFENDER */}
-        {theme.boardType === 'planet_orbit' && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {players.map((p) => (
-              <div key={p.id} className="bg-indigo-950/50 p-3 rounded-2xl border border-indigo-800/60 text-center">
-                <div className="text-3xl mb-1">{p.avatar}</div>
-                <div className="text-xs font-bold text-white truncate">{p.name}</div>
-                <div className="text-xs text-indigo-300 font-mono mt-1">
-                  💥 {p.position} Meteor Hancur
+        {/* THEME 6: MENGISI AIR AJAIB (Water Container Fill) */}
+        {theme.boardType === 'water_container' && (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 h-[220px] sm:h-[250px] items-end">
+            {players.map((p) => {
+              const progressPct = Math.min(100, Math.round((p.position / targetSteps) * 100));
+              const stageIdx = Math.min(4, Math.floor((p.position / targetSteps) * 5));
+
+              return (
+                <div
+                  key={p.id}
+                  className="bg-cyan-950/40 p-2.5 sm:p-3 rounded-2xl border border-cyan-800/80 flex flex-col items-center justify-between h-full relative overflow-hidden shadow-inner"
+                >
+                  {/* Player Tag */}
+                  <div className="flex items-center gap-1 text-xs font-bold text-cyan-200 z-10 w-full justify-between bg-slate-950/70 px-2 py-1 rounded-xl border border-cyan-900/60">
+                    <div className="flex items-center gap-1 truncate">
+                      <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: p.color }} />
+                      <span className="truncate max-w-[65px]">{p.name}</span>
+                    </div>
+                    <span className="text-[11px] text-cyan-400 font-mono font-extrabold">{p.position} / {targetSteps}</span>
+                  </div>
+
+                  {/* Water Tank Vessel */}
+                  <div className="relative w-full flex-1 my-2 bg-slate-950/90 rounded-2xl border-2 border-cyan-500/40 overflow-hidden flex flex-col justify-end p-1 shadow-inner">
+                    {/* Floating Avatar or Water Drop on top */}
+                    <div
+                      className="absolute left-1/2 -translate-x-1/2 transition-all duration-700 ease-out z-20 flex flex-col items-center pointer-events-none"
+                      style={{
+                        bottom: `calc(${Math.min(88, Math.max(10, progressPct))}% - 14px)`,
+                      }}
+                    >
+                      <span className="text-2xl filter drop-shadow-[0_2px_6px_rgba(6,182,212,0.8)] animate-bounce">
+                        {p.avatar}
+                      </span>
+                    </div>
+
+                    {/* Animated Water Liquid Fill */}
+                    <div
+                      className="w-full bg-gradient-to-t from-blue-700 via-cyan-500 to-sky-300 rounded-xl transition-all duration-700 ease-out relative shadow-lg flex flex-col justify-between overflow-hidden"
+                      style={{ height: `${Math.max(8, progressPct)}%` }}
+                    >
+                      {/* Water Wave Ripple Effect */}
+                      <div className="w-full h-2 bg-white/40 animate-pulse" />
+
+                      {/* Floating Bubbles */}
+                      {progressPct >= 20 && (
+                        <div className="absolute inset-0 flex justify-around items-end opacity-60 pointer-events-none">
+                          <span className="text-[10px] animate-bounce delay-100">🫧</span>
+                          <span className="text-[12px] animate-bounce delay-300">💧</span>
+                          <span className="text-[10px] animate-bounce delay-200">🫧</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Fill Percentage Text Overlay */}
+                    <div className="absolute inset-x-0 bottom-2 text-center z-10">
+                      <span className="text-[10px] font-black text-white bg-slate-950/80 px-2 py-0.5 rounded-full border border-cyan-400/50 shadow-md">
+                        💧 {progressPct}%
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Water Status Badge */}
+                  <div className="w-full bg-slate-950/80 rounded-xl py-0.5 px-2 text-center border border-cyan-900 z-10">
+                    <span className="text-[10px] text-cyan-300 font-bold block truncate">
+                      {theme.stepLabels?.[stageIdx] || `Terisi ${progressPct}%`}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
+          </div>
+        )}
+
+        {/* THEME 7: MENGISI ENERGI BATERAI (Vertical Battery Fill) */}
+        {theme.boardType === 'battery_fill' && (
+          <div className={`grid gap-3 sm:gap-4 items-end justify-center py-2 ${
+            players.length === 1 ? 'grid-cols-1 max-w-xs mx-auto' :
+            players.length === 2 ? 'grid-cols-2 max-w-md mx-auto' :
+            players.length === 3 ? 'grid-cols-3 max-w-2xl mx-auto' :
+            'grid-cols-2 sm:grid-cols-4'
+          }`}>
+            {players.map((p) => {
+              const progressPct = Math.min(100, Math.round((p.position / targetSteps) * 100));
+              const stageIdx = Math.min(4, Math.floor((p.position / targetSteps) * 5));
+
+              return (
+                <div
+                  key={p.id}
+                  className="relative bg-slate-950/85 p-3 rounded-2xl border-2 border-emerald-900/70 shadow-2xl flex flex-col items-center justify-between transition-all"
+                >
+                  {/* Player Name & Badge Header */}
+                  <div className="w-full flex flex-col items-center gap-1 mb-2">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-sm" style={{ backgroundColor: p.color }} />
+                      <span className="text-white font-black text-xs sm:text-sm truncate max-w-[100px] sm:max-w-[120px]">
+                        {p.name}
+                      </span>
+                    </div>
+                    <span className="text-[10px] sm:text-[11px] font-semibold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded-md border border-emerald-800/50">
+                      {theme.stepLabels?.[stageIdx] || `Daya ${progressPct}%`}
+                    </span>
+                  </div>
+
+                  {/* Vertical Battery Visual Unit */}
+                  <div className="relative flex flex-col items-center my-1">
+                    {/* Battery Positive (+) Terminal Cap */}
+                    <div className="w-8 h-3.5 bg-gradient-to-r from-emerald-500 to-teal-400 rounded-t-md border-t-2 border-x-2 border-emerald-300 shadow-md flex items-center justify-center -mb-[2px] z-10">
+                      <span className="text-[10px] font-black text-slate-950 leading-none">+</span>
+                    </div>
+
+                    {/* Main Vertical Battery Chamber */}
+                    <div className="relative w-24 sm:w-28 h-52 sm:h-60 bg-slate-900/95 rounded-2xl border-4 border-emerald-500/70 p-1.5 flex flex-col justify-end overflow-hidden shadow-[0_0_25px_rgba(16,185,129,0.2)]">
+                      {/* Horizontal Percentage Marker Lines (25%, 50%, 75%) */}
+                      <div className="absolute inset-x-0 bottom-[25%] border-b border-emerald-500/25 flex items-center justify-end pr-1 pointer-events-none z-20">
+                        <span className="text-[9px] font-bold text-emerald-500/60">25%</span>
+                      </div>
+                      <div className="absolute inset-x-0 bottom-[50%] border-b border-emerald-500/25 flex items-center justify-end pr-1 pointer-events-none z-20">
+                        <span className="text-[9px] font-bold text-emerald-500/60">50%</span>
+                      </div>
+                      <div className="absolute inset-x-0 bottom-[75%] border-b border-emerald-500/25 flex items-center justify-end pr-1 pointer-events-none z-20">
+                        <span className="text-[9px] font-bold text-emerald-500/60">75%</span>
+                      </div>
+
+                      {/* Vertical Green Energy Fill Bar (Bottom to Top) */}
+                      <div
+                        className="w-full bg-gradient-to-t from-emerald-700 via-emerald-500 to-green-400 rounded-xl transition-all duration-700 ease-out relative overflow-hidden shadow-[0_0_20px_rgba(16,185,129,0.6)] flex flex-col justify-between"
+                        style={{ height: `${Math.max(6, progressPct)}%` }}
+                      >
+                        {/* Animated Glowing Wave/Shimmer Effect */}
+                        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.45)_0%,transparent_50%,rgba(0,0,0,0.2)_100%)] pointer-events-none" />
+
+                        {/* Top Edge Glow line */}
+                        <div className="w-full h-1 bg-white/80 shadow-[0_0_8px_#ffffff] shrink-0" />
+
+                        {/* Floating Sparks inside filled green bar */}
+                        {progressPct >= 15 && (
+                          <div className="flex justify-around items-center text-xs py-1 text-emerald-100 opacity-80 pointer-events-none">
+                            <span className="animate-ping delay-100">⚡</span>
+                            <span className="animate-pulse delay-300">✨</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Floating Player Avatar Marker attached to fill level height */}
+                      <div
+                        className="absolute inset-x-1 transition-all duration-700 ease-out z-30 flex items-center justify-center pointer-events-none"
+                        style={{
+                          bottom: `calc(${Math.min(88, Math.max(5, progressPct))}% - 14px)`,
+                        }}
+                      >
+                        <div
+                          className="flex items-center gap-1 bg-slate-950/95 border-2 rounded-xl px-2 py-0.5 shadow-2xl"
+                          style={{ borderColor: p.color }}
+                        >
+                          <span className="text-xl animate-bounce">{p.avatar}</span>
+                          <span className="text-[10px] font-black text-emerald-400">⚡</span>
+                        </div>
+                      </div>
+
+                      {/* Center Overlay Text showing Percentage */}
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+                        <span className="text-[11px] sm:text-xs font-black text-white bg-slate-950/85 px-2 py-1 rounded-full border border-emerald-500/60 shadow-lg text-center">
+                          {progressPct === 100 ? '⚡ 100% FULL' : `⚡ ${progressPct}%`}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Footer Step Stats */}
+                  <div className="w-full text-center mt-2 pt-1 border-t border-slate-800/80">
+                    <span className="text-xs font-extrabold text-emerald-300">
+                      {p.position} / {targetSteps} Poin
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

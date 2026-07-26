@@ -7,9 +7,9 @@ export type ThemeId =
   | 'garden_race'
   | 'monster_evolution'
   | 'color_kingdom'
-  | 'clash_of_numbers'
-  | 'math_chef'
-  | 'planet_defender';
+  | 'rocket_launch'
+  | 'water_fill'
+  | 'battery_charge';
 
 export type PlayerId = 1 | 2 | 3 | 4;
 
@@ -72,7 +72,7 @@ export interface PlayerState {
 }
 
 export interface GameSettings {
-  playerCount: 2 | 3 | 4;
+  playerCount: 1 | 2 | 3 | 4;
   themeId: ThemeId;
   targetSteps: number; // Steps required to finish / win (e.g., 20 or 30)
   timePerRound: number; // Seconds per problem (0 = unlimited / race mode)
@@ -92,7 +92,7 @@ export interface ThemeConfig {
   cardBg: string;
   borderColor: string;
   accentColor: string;
-  boardType: 'race_track' | 'growth_garden' | 'evolution_arena' | 'territory_grid' | 'rpg_battle' | 'kitchen_counters' | 'planet_orbit';
+  boardType: 'race_track' | 'growth_garden' | 'evolution_arena' | 'territory_grid' | 'rocket_sky' | 'water_container' | 'battery_fill';
   description: string;
   avatarOptions: { id: string; name: string; icon: string; color: string }[];
   stepLabels?: string[]; // E.g., for evolution: ["Telur", "Baby", "Junior", "Mega", "Cosmic"]

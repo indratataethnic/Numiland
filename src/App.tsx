@@ -408,7 +408,9 @@ export default function App() {
             {/* SIMULTANEOUS PLAYER STATIONS GRID */}
             <div
               className={`grid gap-3 sm:gap-4 flex-1 ${
-                settings.playerCount === 2
+                settings.playerCount === 1
+                  ? 'grid-cols-1 max-w-2xl mx-auto w-full'
+                  : settings.playerCount === 2
                   ? 'grid-cols-1 sm:grid-cols-2'
                   : settings.playerCount === 3
                   ? 'grid-cols-1 sm:grid-cols-3'
