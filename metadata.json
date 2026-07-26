@@ -1,0 +1,6 @@
+{
+  "name": "Numiland",
+  "description": "Game numerasi matematika interaktif serentak untuk 2-4 pemain dengan 7 pilihan tema, kesulitan dinamis, dan sistem lencana.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
