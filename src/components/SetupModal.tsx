@@ -9,6 +9,7 @@ interface SetupModalProps {
   onStartGame: (settings: GameSettings, players: PlayerState[]) => void;
   onClose?: () => void;
   isInitialSetup?: boolean;
+  onOpenPlayerHistory?: () => void;
 }
 
 const PLAYER_COLORS = [
@@ -23,6 +24,7 @@ export const SetupModal: React.FC<SetupModalProps> = ({
   initialPlayers,
   onStartGame,
   isInitialSetup = false,
+  onOpenPlayerHistory,
 }) => {
   const [settings, setSettings] = useState<GameSettings>(initialSettings);
   const [activeTab, setActiveTab] = useState<'rules' | 'theme' | 'players'>('rules');
@@ -186,8 +188,20 @@ export const SetupModal: React.FC<SetupModalProps> = ({
               </p>
             </div>
           </div>
-          <div className="hidden sm:flex items-center gap-2 bg-slate-950/30 px-3 py-1.5 rounded-xl border border-white/20 text-xs font-semibold">
-            <span>⚡ Serentak & Interaktif</span>
+          <div className="flex items-center gap-2">
+            {onOpenPlayerHistory && (
+              <button
+                type="button"
+                onClick={onOpenPlayerHistory}
+                className="flex items-center gap-1.5 bg-slate-950/50 hover:bg-slate-950/80 text-amber-200 px-3 py-1.5 rounded-xl border border-white/30 text-xs font-bold transition shadow-sm active:scale-95 cursor-pointer"
+              >
+                <Users className="w-4 h-4 text-amber-300" />
+                <span>👥 Data Pemain</span>
+              </button>
+            )}
+            <div className="hidden sm:flex items-center gap-2 bg-slate-950/30 px-3 py-1.5 rounded-xl border border-white/20 text-xs font-semibold">
+              <span>⚡ Serentak & Interaktif</span>
+            </div>
           </div>
         </div>
 

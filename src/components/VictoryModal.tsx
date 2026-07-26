@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { GameSettings, PlayerState, ThemeConfig } from '../types';
 import confetti from 'canvas-confetti';
-import { Trophy, Award, Sparkles, RotateCcw, Settings, Flame, Zap, CheckCircle2 } from 'lucide-react';
+import { Trophy, Award, Sparkles, RotateCcw, Settings, Flame, Zap, CheckCircle2, Users } from 'lucide-react';
 import { audio } from '../utils/audio';
+import { saveGameSession } from '../utils/historyStorage';
 
 interface VictoryModalProps {
   players: PlayerState[];
@@ -10,6 +11,7 @@ interface VictoryModalProps {
   theme: ThemeConfig;
   onPlayAgain: () => void;
   onOpenSetup: () => void;
+  onOpenPlayerHistory?: () => void;
 }
 
 export const VictoryModal: React.FC<VictoryModalProps> = ({
@@ -18,6 +20,7 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
   theme,
   onPlayAgain,
   onOpenSetup,
+  onOpenPlayerHistory,
 }) => {
   const [aiSummary, setAiSummary] = useState<{ summary: string; recommendation: string } | null>(null);
   const [loadingAi, setLoadingAi] = useState<boolean>(true);
@@ -31,6 +34,32 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
   const winner = sortedPlayers[0];
 
   useEffect(() => {
+    // Save game session data to localStorage
+    try {
+      saveGameSession({
+        themeId: theme.id,
+        themeName: theme.name,
+        themeEmoji: theme.emoji,
+        playerCount: settings.playerCount,
+        targetSteps: settings.targetSteps,
+        winnerName: winner.name,
+        winnerAvatar: winner.avatar,
+        players: sortedPlayers.map((p) => ({
+          id: p.id,
+          name: p.name,
+          avatar: p.avatar,
+          position: p.position,
+          totalCorrect: p.stats.totalCorrect,
+          totalAttempted: p.stats.totalAttempted,
+          accuracy: p.stats.totalAttempted > 0 ? Math.round((p.stats.totalCorrect / p.stats.totalAttempted) * 100) : 0,
+          highestStreak: p.stats.highestStreak,
+          gradeLevel: p.gradeLevel,
+        })),
+      });
+    } catch (err) {
+      console.error('Error auto-saving victory session:', err);
+    }
+
     // Trigger victory sound & rich multi-burst confetti shower
     audio.playVictory();
 
@@ -191,17 +220,29 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
 
         {/* Footer Actions */}
         <div className="p-4 sm:p-5 bg-slate-950 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
-          <button
-            onClick={onOpenSetup}
-            className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm transition flex items-center gap-2 cursor-pointer"
-          >
-            <Settings className="w-4 h-4 text-amber-400" />
-            <span>Ubah Pengaturan</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={onOpenSetup}
+              className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs sm:text-sm transition flex items-center gap-2 cursor-pointer"
+            >
+              <Settings className="w-4 h-4 text-amber-400" />
+              <span>Pengaturan</span>
+            </button>
+
+            {onOpenPlayerHistory && (
+              <button
+                onClick={onOpenPlayerHistory}
+                className="px-4 py-2.5 rounded-xl bg-indigo-950/80 hover:bg-indigo-900/80 text-indigo-200 border border-indigo-700/60 font-bold text-xs sm:text-sm transition flex items-center gap-2 cursor-pointer"
+              >
+                <Users className="w-4 h-4 text-indigo-400" />
+                <span>👥 Data Pemain</span>
+              </button>
+            )}
+          </div>
 
           <button
             onClick={onPlayAgain}
-            className="px-7 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-black text-base shadow-xl transition transform active:scale-95 flex items-center gap-2 cursor-pointer"
+            className="px-6 py-2.5 sm:py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-black text-sm sm:text-base shadow-xl transition transform active:scale-95 flex items-center gap-2 cursor-pointer ml-auto"
           >
             <RotateCcw className="w-5 h-5" />
             <span>MAIN LAGI SERENTAK!</span>

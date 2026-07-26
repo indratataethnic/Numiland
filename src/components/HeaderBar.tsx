@@ -1,5 +1,5 @@
 import React from 'react';
-import { Volume2, VolumeX, Maximize, Pause, Play, RotateCcw, Settings, GraduationCap, Home, XCircle } from 'lucide-react';
+import { Volume2, VolumeX, Maximize, Pause, Play, RotateCcw, Settings, GraduationCap, Home, Users } from 'lucide-react';
 import { GameSettings, GameStage, ThemeConfig } from '../types';
 
 interface HeaderBarProps {
@@ -12,6 +12,7 @@ interface HeaderBarProps {
   onRestartMatch: () => void;
   onOpenSetup: () => void;
   onOpenTeacherPanel: () => void;
+  onOpenPlayerHistory?: () => void;
 }
 
 export const HeaderBar: React.FC<HeaderBarProps> = ({
@@ -24,6 +25,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   onRestartMatch,
   onOpenSetup,
   onOpenTeacherPanel,
+  onOpenPlayerHistory,
 }) => {
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -75,6 +77,18 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           >
             <Home className="w-4 h-4 text-white shrink-0" />
             <span className="text-xs font-extrabold tracking-wide">Beranda</span>
+          </button>
+        )}
+
+        {/* Data Pemain / History Button */}
+        {onOpenPlayerHistory && (
+          <button
+            onClick={onOpenPlayerHistory}
+            className="flex items-center gap-1 sm:gap-1.5 bg-amber-600/20 hover:bg-amber-600/40 text-amber-300 border border-amber-500/40 px-2 sm:px-3 py-1.5 rounded-xl text-xs font-semibold transition active:scale-95 cursor-pointer"
+            title="Lihat Data Orang Yang Bermain & Riwayat"
+          >
+            <Users className="w-4 h-4 text-amber-400 shrink-0" />
+            <span className="hidden sm:inline">Data Pemain</span>
           </button>
         )}
 

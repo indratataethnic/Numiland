@@ -18,7 +18,9 @@ import { PlayerPad } from './components/PlayerPad';
 import { GameBoard } from './components/GameBoard';
 import { TeacherPanelModal } from './components/TeacherPanelModal';
 import { VictoryModal } from './components/VictoryModal';
+import { PlayerHistoryModal } from './components/PlayerHistoryModal';
 import { audio } from './utils/audio';
+import { incrementPageViewCount } from './utils/historyStorage';
 
 const INITIAL_SETTINGS: GameSettings = {
   playerCount: 2,
@@ -135,7 +137,13 @@ export default function App() {
   const [players, setPlayers] = useState<PlayerState[]>(INITIAL_PLAYERS);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [showTeacherPanel, setShowTeacherPanel] = useState<boolean>(false);
+  const [showPlayerHistory, setShowPlayerHistory] = useState<boolean>(false);
   const [countdownNum, setCountdownNum] = useState<number>(3);
+
+  // Increment page view on mount
+  useEffect(() => {
+    incrementPageViewCount();
+  }, []);
 
   // Sound sync
   const toggleSound = () => {
@@ -351,6 +359,7 @@ export default function App() {
         onRestartMatch={() => startMatch(settings, players)}
         onOpenSetup={() => setStage('setup')}
         onOpenTeacherPanel={() => setShowTeacherPanel(true)}
+        onOpenPlayerHistory={() => setShowPlayerHistory(true)}
       />
 
       {/* MAIN GAME CONTAINER (Responsive Smartboard Layout) */}
@@ -373,6 +382,7 @@ export default function App() {
             initialSettings={settings}
             initialPlayers={players}
             onStartGame={startMatch}
+            onOpenPlayerHistory={() => setShowPlayerHistory(true)}
           />
         )}
 
@@ -386,6 +396,11 @@ export default function App() {
           />
         )}
 
+        {/* PLAYER HISTORY MODAL */}
+        {showPlayerHistory && (
+          <PlayerHistoryModal onClose={() => setShowPlayerHistory(false)} />
+        )}
+
         {/* VICTORY MODAL */}
         {stage === 'victory' && (
           <VictoryModal
@@ -394,6 +409,7 @@ export default function App() {
             theme={currentTheme}
             onPlayAgain={() => startMatch(settings, players)}
             onOpenSetup={() => setStage('setup')}
+            onOpenPlayerHistory={() => setShowPlayerHistory(true)}
           />
         )}
 
