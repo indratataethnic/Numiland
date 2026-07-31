@@ -11,7 +11,7 @@ interface GameBoardProps {
 export const GameBoard: React.FC<GameBoardProps> = ({ theme, players, targetSteps }) => {
   return (
     <div
-      className={`w-full h-full min-h-[300px] sm:min-h-[360px] rounded-3xl border-2 ${theme.borderColor} ${theme.cardBg} p-4 sm:p-5 flex flex-col justify-between backdrop-blur-md shadow-2xl relative overflow-hidden select-none`}
+      className={`w-full h-full rounded-3xl border-2 ${theme.borderColor} ${theme.cardBg} p-3 sm:p-4 flex flex-col justify-between backdrop-blur-md shadow-2xl relative overflow-hidden select-none`}
     >
       {/* Background Decor Ambient */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-950/40 to-slate-950/80 pointer-events-none" />
@@ -581,6 +581,153 @@ export const GameBoard: React.FC<GameBoardProps> = ({ theme, players, targetStep
                   {/* Footer Step Stats */}
                   <div className="w-full text-center mt-2 pt-1 border-t border-slate-800/80">
                     <span className="text-xs font-extrabold text-emerald-300">
+                      {p.position} / {targetSteps} Poin
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* THEME 8: PANJAT PINANG KEMERDEKAAN (Authentic Indonesian Areca Palm Tree Climb) */}
+        {theme.boardType === 'pinang_climb' && (
+          <div className={`grid gap-3 sm:gap-4 items-end justify-center py-2 ${
+            players.length === 1 ? 'grid-cols-1 max-w-xs mx-auto' :
+            players.length === 2 ? 'grid-cols-2 max-w-md mx-auto' :
+            players.length === 3 ? 'grid-cols-3 max-w-2xl mx-auto' :
+            'grid-cols-2 sm:grid-cols-4'
+          }`}>
+            {players.map((p) => {
+              const progressPct = Math.min(100, Math.round((p.position / targetSteps) * 100));
+              const stageIdx = Math.min(4, Math.floor((p.position / targetSteps) * 5));
+
+              return (
+                <div
+                  key={p.id}
+                  className="relative bg-slate-950/90 p-3 rounded-2xl border-2 border-red-800/80 shadow-2xl flex flex-col items-center justify-between transition-all"
+                >
+                  {/* Player Header & Stage Label */}
+                  <div className="w-full flex flex-col items-center gap-1 mb-1.5">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-sm" style={{ backgroundColor: p.color }} />
+                      <span className="text-white font-black text-xs sm:text-sm truncate max-w-[100px] sm:max-w-[120px]">
+                        {p.name}
+                      </span>
+                    </div>
+                    <span className="text-[10px] sm:text-[11px] font-bold text-amber-300 bg-red-950/90 px-2.5 py-0.5 rounded-md border border-red-700/60 shadow-sm">
+                      {theme.stepLabels?.[stageIdx] || `Tinggi ${progressPct}%`}
+                    </span>
+                  </div>
+
+                  {/* Complete Panjat Pinang Tree Construction */}
+                  <div className="relative flex flex-col items-center my-1 w-full">
+                    {/* 1. TOP CROWN: PALM FRONDS & FLAG */}
+                    <div className="relative flex flex-col items-center z-30">
+                      {/* Flag at Peak */}
+                      <div className="flex items-center gap-1 bg-red-600 text-white px-2 py-0.5 rounded-full text-[10px] font-black shadow-lg border border-amber-300 animate-bounce">
+                        <span>🇲🇨</span>
+                        <span>MERDEKA!</span>
+                      </div>
+
+                      {/* Palm Tree Leaves Crown */}
+                      <div className="text-2xl -my-1 filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] pointer-events-none">
+                        🌴 🌴 🌴
+                      </div>
+
+                      {/* 2. BAMBOO PRIZE WHEEL (Roda Bamboo Hadiah 17an) */}
+                      <div className="w-28 sm:w-32 bg-gradient-to-r from-amber-800 via-yellow-700 to-amber-800 border-2 border-amber-300 rounded-full py-1.5 px-2 flex flex-col items-center shadow-xl relative overflow-hidden -mt-1">
+                        <div className="text-[9px] font-black text-amber-200 tracking-wider uppercase flex items-center gap-1">
+                          🎁 Hadiah Puncak 🎁
+                        </div>
+                        {/* Hanging Prizes Grid */}
+                        <div className="flex items-center justify-around w-full mt-1 text-sm sm:text-base bg-slate-950/60 rounded-lg py-1 px-1 border border-amber-500/40 shadow-inner">
+                          <span title="Sepeda" className="animate-pulse">🚲</span>
+                          <span title="Radio" className="animate-bounce delay-100">📻</span>
+                          <span title="Baju" className="animate-pulse delay-200">👕</span>
+                          <span title="Panci" className="animate-bounce delay-300">🍳</span>
+                          <span title="Kado" className="animate-pulse delay-150">🎁</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 3. MAIN OILY WOODEN TREE TRUNK */}
+                    <div className="relative w-24 sm:w-28 h-44 sm:h-52 md:h-56 bg-amber-950 rounded-b-xl border-x-4 border-b-4 border-amber-800/90 p-1 flex flex-col justify-end overflow-hidden shadow-[0_0_20px_rgba(180,83,9,0.3)] -mt-1">
+                      {/* Tree Bark Notch Rings & Texture */}
+                      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(120,53,15,0.9)_0%,rgba(69,26,3,0.95)_50%,rgba(120,53,15,0.9)_100%)] pointer-events-none" />
+                      
+                      {/* Horizontal Bark Rings */}
+                      <div className="absolute inset-x-0 top-[15%] border-b border-amber-900/60 pointer-events-none" />
+                      <div className="absolute inset-x-0 top-[30%] border-b border-amber-900/60 pointer-events-none" />
+                      <div className="absolute inset-x-0 top-[45%] border-b border-amber-900/60 pointer-events-none" />
+                      <div className="absolute inset-x-0 top-[60%] border-b border-amber-900/60 pointer-events-none" />
+                      <div className="absolute inset-x-0 top-[75%] border-b border-amber-900/60 pointer-events-none" />
+
+                      {/* Glossy Oil / Pelumas Sheen Effect */}
+                      <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-5 bg-gradient-to-r from-transparent via-amber-400/20 to-transparent pointer-events-none" />
+
+                      {/* Slick Oil Drops Drip Animation */}
+                      <div className="absolute inset-0 flex justify-between px-2 opacity-50 pointer-events-none z-10">
+                        <span className="text-[10px] animate-bounce delay-75">💧</span>
+                        <span className="text-[12px] animate-pulse delay-300">💦</span>
+                      </div>
+
+                      {/* Height Percentage Guide Markers */}
+                      <div className="absolute inset-x-0 bottom-[75%] border-b border-dashed border-amber-500/40 flex items-center justify-between px-1 pointer-events-none z-10 text-[8px] font-extrabold text-amber-300/70">
+                        <span>75%</span>
+                        <span>Hampir Puncak 🏁</span>
+                      </div>
+                      <div className="absolute inset-x-0 bottom-[50%] border-b border-dashed border-amber-500/40 flex items-center justify-between px-1 pointer-events-none z-10 text-[8px] font-extrabold text-amber-300/70">
+                        <span>50%</span>
+                        <span>Pertengahan</span>
+                      </div>
+                      <div className="absolute inset-x-0 bottom-[25%] border-b border-dashed border-amber-500/40 flex items-center justify-between px-1 pointer-events-none z-10 text-[8px] font-extrabold text-amber-300/70">
+                        <span>25%</span>
+                        <span>Panjat Licin</span>
+                      </div>
+
+                      {/* Climbing Fill Gradient on Pole */}
+                      <div
+                        className="w-full bg-gradient-to-t from-red-900 via-amber-600 to-yellow-400 rounded-lg transition-all duration-700 ease-out relative shadow-[0_0_12px_rgba(251,191,36,0.6)] flex flex-col justify-between overflow-hidden"
+                        style={{ height: `${Math.max(8, progressPct)}%` }}
+                      >
+                        <div className="w-full h-1.5 bg-yellow-100 animate-pulse shadow-[0_0_8px_#fef08a]" />
+                      </div>
+
+                      {/* CLIMBER PLAYER AVATAR ON TRUNK */}
+                      <div
+                        className="absolute inset-x-0 transition-all duration-700 ease-out z-30 flex items-center justify-center pointer-events-none"
+                        style={{
+                          bottom: `calc(${Math.min(88, Math.max(6, progressPct))}% - 14px)`,
+                        }}
+                      >
+                        <div
+                          className="flex items-center gap-1 bg-slate-950/95 border-2 rounded-xl px-2 py-0.5 shadow-2xl scale-105"
+                          style={{ borderColor: p.color }}
+                        >
+                          <span className="text-xl animate-bounce">{p.avatar}</span>
+                          <span className="text-[10px] font-black text-amber-300">🧗</span>
+                        </div>
+                      </div>
+
+                      {/* Percentage Badge Overlay on Trunk Center */}
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+                        <span className="text-[10px] sm:text-[11px] font-black text-white bg-slate-950/85 px-2 py-0.5 rounded-full border border-amber-400/60 shadow-lg text-center">
+                          {progressPct === 100 ? '🎉 100% CAPAI PUNCAK' : `🌴 ${progressPct}% TINGGI`}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* 4. BOTTOM GROUND: GRASS, MUD & SPECTATORS */}
+                    <div className="w-28 sm:w-32 bg-gradient-to-r from-emerald-950 via-green-900 to-emerald-950 py-1 px-2 rounded-b-xl border-x-2 border-b-2 border-emerald-600/70 flex items-center justify-between text-[9px] font-bold text-emerald-200 z-20 shadow-md">
+                      <span className="flex items-center gap-0.5">🌱 Tanah 🇲🇨</span>
+                      <span className="text-[10px]">👏 🥳</span>
+                    </div>
+                  </div>
+
+                  {/* Footer Score Stats */}
+                  <div className="w-full text-center mt-2 pt-1 border-t border-slate-800/80">
+                    <span className="text-xs font-extrabold text-red-400">
                       {p.position} / {targetSteps} Poin
                     </span>
                   </div>

@@ -346,8 +346,10 @@ export default function App() {
   const currentTheme = THEMES[settings.themeId];
   const activePlayers = players.slice(0, settings.playerCount);
 
+  const isGameplay = stage === 'playing' || stage === 'paused' || stage === 'countdown';
+
   return (
-    <div className={`min-h-screen w-full bg-gradient-to-br ${currentTheme.bgGradient} text-white flex flex-col font-sans overflow-x-hidden select-none`}>
+    <div className={`w-full bg-gradient-to-br ${currentTheme.bgGradient} text-white flex flex-col font-sans select-none ${isGameplay ? 'h-screen max-h-screen overflow-hidden' : 'min-h-screen overflow-x-hidden'}`}>
       {/* Top Bar Header */}
       <HeaderBar
         stage={stage}
@@ -363,7 +365,7 @@ export default function App() {
       />
 
       {/* MAIN GAME CONTAINER (Responsive Smartboard Layout) */}
-      <main className="flex-1 p-3 sm:p-5 flex flex-col justify-between max-w-[1600px] mx-auto w-full gap-4">
+      <main className={`flex-1 max-w-[1600px] mx-auto w-full flex flex-col justify-between ${isGameplay ? 'p-2 sm:p-3 gap-2 overflow-hidden h-full min-h-0' : 'p-3 sm:p-5 gap-4'}`}>
         {/* COUNTDOWN OVERLAY */}
         {stage === 'countdown' && (
           <div className="fixed inset-0 bg-slate-950/85 backdrop-blur-md flex flex-col items-center justify-center z-40 select-none">
@@ -415,15 +417,15 @@ export default function App() {
 
         {/* PLAYING / PAUSED INTERACTIVE BOARD LAYOUT */}
         {(stage === 'playing' || stage === 'paused' || stage === 'countdown') && (
-          <div className="flex-1 flex flex-col gap-4">
+          <div className="flex-1 flex flex-col gap-2 sm:gap-3 min-h-0 overflow-hidden">
             {/* CENTRAL THEME BOARD VISUALIZER */}
-            <div className="w-full">
+            <div className="w-full shrink-0 h-[28vh] sm:h-[32vh] min-h-[160px] max-h-[350px]">
               <GameBoard theme={currentTheme} players={activePlayers} targetSteps={settings.targetSteps} />
             </div>
 
             {/* SIMULTANEOUS PLAYER STATIONS GRID */}
             <div
-              className={`grid gap-3 sm:gap-4 flex-1 ${
+              className={`grid gap-2 sm:gap-3 flex-1 min-h-0 overflow-hidden ${
                 settings.playerCount === 1
                   ? 'grid-cols-1 max-w-2xl mx-auto w-full'
                   : settings.playerCount === 2

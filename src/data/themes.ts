@@ -140,4 +140,24 @@ export const THEMES: Record<ThemeId, ThemeConfig> = {
     ],
     stepLabels: ['Baterai Kosong (0%)', 'Daya Rendah (25%)', 'Daya Sedang (50%)', 'Hampir Penuh (75%)', 'Daya Penuh 100%! ⚡'],
   },
+
+  panjat_pinang: {
+    id: 'panjat_pinang',
+    name: 'Panjat Pinang Kemerdekaan',
+    subtitle: 'Lomba Memanjat Pohon Pinang 17 Agustus 🇮🇩',
+    emoji: '🌴',
+    bgGradient: 'from-red-950 via-amber-950 to-slate-950',
+    cardBg: 'bg-red-950/40',
+    borderColor: 'border-red-500/40',
+    accentColor: '#ef4444',
+    boardType: 'pinang_climb',
+    description: 'Panjat pohon pinang licin khas peringatan Hari Kemerdekaan Indonesia! Pemain memanjat batang pohon berminyak hingga ke puncak untuk merabut hadiah-hadiah keren (sepeda, radio, bendera 🇲🇨) dengan setiap jawaban matematika yang benar!',
+    avatarOptions: [
+      { id: 'pemuda_merah', name: 'Pemuda Merah', icon: '👦', color: 'bg-red-500' },
+      { id: 'pemudi_putih', name: 'Pemudi Putih', icon: '👧', color: 'bg-slate-100' },
+      { id: 'pejuang_cilik', name: 'Pejuang Cilik', icon: '🎒', color: 'bg-amber-400' },
+      { id: 'tim_merdeka', name: 'Tim Merdeka', icon: '🇲🇨', color: 'bg-rose-500' },
+    ],
+    stepLabels: ['Pangkal Batang (Start)', 'Panjat Licin 25%', 'Pertengahan Pohon 50%', 'Hampir Puncak 75%', 'Raih Hadiah Puncak! 🚲 📻 👕 🇲🇨'],
+  },
 };

@@ -9,7 +9,8 @@ export type ThemeId =
   | 'color_kingdom'
   | 'rocket_launch'
   | 'water_fill'
-  | 'battery_charge';
+  | 'battery_charge'
+  | 'panjat_pinang';
 
 export type PlayerId = 1 | 2 | 3 | 4;
 
@@ -92,7 +93,7 @@ export interface ThemeConfig {
   cardBg: string;
   borderColor: string;
   accentColor: string;
-  boardType: 'race_track' | 'growth_garden' | 'evolution_arena' | 'territory_grid' | 'rocket_sky' | 'water_container' | 'battery_fill';
+  boardType: 'race_track' | 'growth_garden' | 'evolution_arena' | 'territory_grid' | 'rocket_sky' | 'water_container' | 'battery_fill' | 'pinang_climb';
   description: string;
   avatarOptions: { id: string; name: string; icon: string; color: string }[];
   stepLabels?: string[]; // E.g., for evolution: ["Telur", "Baby", "Junior", "Mega", "Cosmic"]
