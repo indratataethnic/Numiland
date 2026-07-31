@@ -8,6 +8,8 @@ import {
   MathProblem,
   PlayerState,
   ThemeId,
+  UiScale,
+  BoardMode,
 } from './types';
 import { THEMES } from './data/themes';
 import { BADGE_DEFINITIONS } from './data/badges';
@@ -139,6 +141,8 @@ export default function App() {
   const [showTeacherPanel, setShowTeacherPanel] = useState<boolean>(false);
   const [showPlayerHistory, setShowPlayerHistory] = useState<boolean>(false);
   const [countdownNum, setCountdownNum] = useState<number>(3);
+  const [uiScale, setUiScale] = useState<UiScale>('medium');
+  const [boardMode, setBoardMode] = useState<BoardMode>('normal');
 
   // Increment page view on mount
   useEffect(() => {
@@ -348,6 +352,12 @@ export default function App() {
 
   const isGameplay = stage === 'playing' || stage === 'paused' || stage === 'countdown';
 
+  const boardHeightClass =
+    uiScale === 'small' ? 'h-[23vh] sm:h-[26vh] min-h-[120px] max-h-[220px]' :
+    uiScale === 'large' ? 'h-[25vh] sm:h-[28vh] min-h-[140px] max-h-[280px]' :
+    uiScale === 'huge' ? 'h-[20vh] sm:h-[23vh] min-h-[110px] max-h-[200px]' :
+    'h-[28vh] sm:h-[32vh] min-h-[160px] max-h-[350px]';
+
   return (
     <div className={`w-full bg-gradient-to-br ${currentTheme.bgGradient} text-white flex flex-col font-sans select-none ${isGameplay ? 'h-screen max-h-screen overflow-hidden' : 'min-h-screen overflow-x-hidden'}`}>
       {/* Top Bar Header */}
@@ -362,6 +372,10 @@ export default function App() {
         onOpenSetup={() => setStage('setup')}
         onOpenTeacherPanel={() => setShowTeacherPanel(true)}
         onOpenPlayerHistory={() => setShowPlayerHistory(true)}
+        uiScale={uiScale}
+        onUiScaleChange={setUiScale}
+        boardMode={boardMode}
+        onBoardModeChange={setBoardMode}
       />
 
       {/* MAIN GAME CONTAINER (Responsive Smartboard Layout) */}
@@ -418,10 +432,42 @@ export default function App() {
         {/* PLAYING / PAUSED INTERACTIVE BOARD LAYOUT */}
         {(stage === 'playing' || stage === 'paused' || stage === 'countdown') && (
           <div className="flex-1 flex flex-col gap-2 sm:gap-3 min-h-0 overflow-hidden">
-            {/* CENTRAL THEME BOARD VISUALIZER */}
-            <div className="w-full shrink-0 h-[28vh] sm:h-[32vh] min-h-[160px] max-h-[350px]">
-              <GameBoard theme={currentTheme} players={activePlayers} targetSteps={settings.targetSteps} />
-            </div>
+            {/* CENTRAL THEME BOARD VISUALIZER / COMPACT STATS */}
+            {boardMode === 'normal' && (
+              <div className={`w-full shrink-0 ${boardHeightClass}`}>
+                <GameBoard theme={currentTheme} players={activePlayers} targetSteps={settings.targetSteps} />
+              </div>
+            )}
+
+            {boardMode === 'compact' && (
+              <div className="w-full shrink-0 bg-slate-900/90 border border-slate-800 rounded-2xl p-2 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-1.5 text-xs text-slate-300 font-bold shrink-0">
+                  <span>{currentTheme.emoji}</span>
+                  <span className="truncate max-w-[80px]">{currentTheme.name}</span>
+                </div>
+                <div className="flex-1 flex items-center gap-3 justify-end overflow-hidden">
+                  {activePlayers.map((player) => {
+                    const pct = Math.min(100, Math.round((player.position / settings.targetSteps) * 100));
+                    return (
+                      <div key={player.id} className="flex items-center gap-2 bg-slate-950/60 px-2 py-1 rounded-xl border border-slate-800 text-[11px] font-semibold flex-1 max-w-[180px]">
+                        <span className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: player.color }}>
+                          {player.avatar}
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-1">
+                            <span className="text-white truncate font-black">{player.name}</span>
+                            <span className="text-amber-400 font-black">{player.position}/{settings.targetSteps}</span>
+                          </div>
+                          <div className="w-full bg-slate-800 h-1 rounded-full overflow-hidden mt-0.5">
+                            <div className="h-full rounded-full transition-all duration-300" style={{ width: `${pct}%`, backgroundColor: player.color }} />
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* SIMULTANEOUS PLAYER STATIONS GRID */}
             <div
@@ -444,6 +490,7 @@ export default function App() {
                   isPaused={stage === 'paused'}
                   totalSteps={settings.targetSteps}
                   layoutPosition="col"
+                  uiScale={uiScale}
                 />
               ))}
             </div>

@@ -1,5 +1,9 @@
 export type GradeLevel = 'kelas1-2' | 'kelas3-4' | 'kelas5-6' | 'adaptive';
 
+export type UiScale = 'small' | 'medium' | 'large' | 'huge';
+
+export type BoardMode = 'normal' | 'compact' | 'hidden';
+
 export type MathOperation = 'addition' | 'subtraction' | 'multiplication' | 'division' | 'mixed';
 
 export type ThemeId =

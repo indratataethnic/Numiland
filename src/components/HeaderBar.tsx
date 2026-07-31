@@ -1,6 +1,6 @@
 import React from 'react';
-import { Volume2, VolumeX, Maximize, Pause, Play, RotateCcw, Settings, GraduationCap, Home, Users } from 'lucide-react';
-import { GameSettings, GameStage, ThemeConfig } from '../types';
+import { Volume2, VolumeX, Maximize, Pause, Play, RotateCcw, Settings, GraduationCap, Home, Users, Eye, EyeOff, Layers } from 'lucide-react';
+import { GameSettings, GameStage, ThemeConfig, UiScale, BoardMode } from '../types';
 
 interface HeaderBarProps {
   stage: GameStage;
@@ -13,6 +13,10 @@ interface HeaderBarProps {
   onOpenSetup: () => void;
   onOpenTeacherPanel: () => void;
   onOpenPlayerHistory?: () => void;
+  uiScale: UiScale;
+  onUiScaleChange: (scale: UiScale) => void;
+  boardMode: BoardMode;
+  onBoardModeChange: (mode: BoardMode) => void;
 }
 
 export const HeaderBar: React.FC<HeaderBarProps> = ({
@@ -26,6 +30,10 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   onOpenSetup,
   onOpenTeacherPanel,
   onOpenPlayerHistory,
+  uiScale,
+  onUiScaleChange,
+  boardMode,
+  onBoardModeChange,
 }) => {
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -33,6 +41,32 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
     } else {
       document.exitFullscreen().catch((err) => console.log(err));
     }
+  };
+
+  const nextScaleMap: Record<UiScale, UiScale> = {
+    small: 'medium',
+    medium: 'large',
+    large: 'huge',
+    huge: 'small',
+  };
+
+  const scaleLabels: Record<UiScale, string> = {
+    small: 'Papan Tablet',
+    medium: 'Layar Biasa',
+    large: 'Papan 65" (Besar)',
+    huge: 'Skala Raksasa',
+  };
+
+  const nextBoardModeMap: Record<BoardMode, BoardMode> = {
+    normal: 'compact',
+    compact: 'hidden',
+    hidden: 'normal',
+  };
+
+  const boardModeLabels: Record<BoardMode, string> = {
+    normal: 'Papan Penuh',
+    compact: 'Papan Ringkas',
+    hidden: 'Papan Sembunyi',
   };
 
   return (
@@ -101,6 +135,62 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           <GraduationCap className="w-4 h-4 text-indigo-400 shrink-0" />
           <span className="hidden md:inline">Panel Guru</span>
         </button>
+
+        {/* Scale Selector */}
+        <div className="flex items-center bg-slate-800/80 rounded-xl border border-slate-700/80 p-0.5">
+          {/* Desktop/Whiteboard: full Pill selection */}
+          <div className="hidden lg:flex items-center">
+            {(['small', 'medium', 'large', 'huge'] as UiScale[]).map((sc) => (
+              <button
+                key={sc}
+                onClick={() => onUiScaleChange(sc)}
+                className={`px-2 py-1 rounded-lg text-[11px] font-black tracking-tight transition-all cursor-pointer ${
+                  uiScale === sc ? 'bg-amber-500 text-slate-950 shadow-md font-extrabold' : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                {sc === 'small' ? '📱 Tablet' : sc === 'medium' ? '🖥️ Biasa' : sc === 'large' ? '📺 Papan 65"' : '🎪 Raksasa'}
+              </button>
+            ))}
+          </div>
+
+          {/* Tablet/Mobile: Simple single cycle-button to save space */}
+          <button
+            onClick={() => onUiScaleChange(nextScaleMap[uiScale])}
+            className="flex lg:hidden items-center gap-1 px-2 py-1 text-xs font-black text-amber-300 hover:bg-slate-700 rounded-lg cursor-pointer transition active:scale-95"
+            title="Klik untuk ubah ukuran tombol / skala layar"
+          >
+            <span className="text-sm">📐</span>
+            <span className="text-[10px] font-bold text-slate-300">{scaleLabels[uiScale]}</span>
+          </button>
+        </div>
+
+        {/* Board Mode Selector */}
+        <div className="flex items-center bg-slate-800/80 rounded-xl border border-slate-700/80 p-0.5">
+          {/* Desktop/Whiteboard: full Pill selection */}
+          <div className="hidden lg:flex items-center">
+            {(['normal', 'compact', 'hidden'] as BoardMode[]).map((bm) => (
+              <button
+                key={bm}
+                onClick={() => onBoardModeChange(bm)}
+                className={`px-2 py-1 rounded-lg text-[11px] font-black tracking-tight transition-all cursor-pointer ${
+                  boardMode === bm ? 'bg-indigo-500 text-white shadow-md font-extrabold' : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                {bm === 'normal' ? '🗺️ Penuh' : bm === 'compact' ? '➖ Ringkas' : '🙈 Sembunyi'}
+              </button>
+            ))}
+          </div>
+
+          {/* Tablet/Mobile: Simple single cycle-button to save space */}
+          <button
+            onClick={() => onBoardModeChange(nextBoardModeMap[boardMode])}
+            className="flex lg:hidden items-center gap-1 px-2 py-1 text-xs font-black text-indigo-300 hover:bg-slate-700 rounded-lg cursor-pointer transition active:scale-95"
+            title="Klik untuk ubah tampilan papan skor"
+          >
+            <span className="text-sm">🗺️</span>
+            <span className="text-[10px] font-bold text-slate-300">{boardModeLabels[boardMode]}</span>
+          </button>
+        </div>
 
         {/* Sound Toggle */}
         <button
