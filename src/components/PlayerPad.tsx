@@ -196,7 +196,7 @@ export const PlayerPad: React.FC<PlayerPadProps> = ({
       </div>
 
       {/* Problem Display Card */}
-      <div className={`my-2 p-3 sm:p-4 rounded-2xl bg-slate-950/80 border border-slate-800 flex flex-col items-center justify-center text-center relative overflow-hidden ${style.problemMinHeight}`}>
+      <div className={`my-1 sm:my-2 p-2 sm:p-3 rounded-2xl bg-slate-950/80 border border-slate-800 flex flex-col items-center justify-center text-center relative overflow-hidden ${style.problemMinHeight}`}>
         {currentProblem ? (
           <>
             <div className={`${style.problemText} font-black text-white tracking-wider font-mono`}>

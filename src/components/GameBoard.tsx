@@ -94,7 +94,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ theme, players, targetStep
 
         {/* THEME 2: GARDEN RACE (Plant Growth) */}
         {theme.boardType === 'growth_garden' && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 h-[220px] sm:h-[250px] items-end">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3.5 h-[18vh] sm:h-[22vh] min-h-[130px] max-h-[250px] items-end">
             {players.map((p) => {
               const progressPct = Math.min(100, Math.max(8, Math.round((p.position / targetSteps) * 100)));
               const stageIdx = Math.min(4, Math.floor((p.position / targetSteps) * 5));
@@ -302,7 +302,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ theme, players, targetStep
                   </div>
 
                   {/* Vertical Rocket Launch Chamber (Earth at bottom, Space at top) */}
-                  <div className="relative w-28 sm:w-32 h-60 sm:h-72 bg-[linear-gradient(to_top,#047857_0%,#0284c7_30%,#312e81_65%,#030712_100%)] rounded-2xl border-4 border-indigo-500/60 p-1.5 flex flex-col justify-between overflow-hidden shadow-[0_0_25px_rgba(99,102,241,0.25)]">
+                  <div className="relative w-24 sm:w-28 h-[16vh] sm:h-[20vh] min-h-[130px] max-h-[250px] bg-[linear-gradient(to_top,#047857_0%,#0284c7_30%,#312e81_65%,#030712_100%)] rounded-2xl border-4 border-indigo-500/60 p-1.5 flex flex-col justify-between overflow-hidden shadow-[0_0_25px_rgba(99,102,241,0.25)]">
                     {/* Top Goal: Outer Space & Stars (100%) */}
                     <div className="w-full flex justify-between items-center px-1.5 text-[10px] sm:text-[11px] z-20 font-extrabold text-amber-300 bg-slate-950/80 py-0.5 rounded-md border border-indigo-500/40">
                       <span>🌌 Angkasa</span>
@@ -416,7 +416,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ theme, players, targetStep
                     </div>
 
                     {/* Main Water Vessel */}
-                    <div className="relative w-28 sm:w-32 h-56 sm:h-64 bg-slate-900/95 rounded-b-2xl border-x-4 border-b-4 border-cyan-500/70 p-1.5 flex flex-col justify-end overflow-hidden shadow-[0_0_25px_rgba(6,182,212,0.25)]">
+                    <div className="relative w-24 sm:w-28 h-[16vh] sm:h-[20vh] min-h-[130px] max-h-[250px] bg-slate-900/95 rounded-b-2xl border-x-4 border-b-4 border-cyan-500/70 p-1.5 flex flex-col justify-end overflow-hidden shadow-[0_0_25px_rgba(6,182,212,0.25)]">
                       {/* Graduation Marks (25%, 50%, 75%) */}
                       <div className="absolute inset-x-0 bottom-[75%] border-b border-cyan-400/30 flex items-center justify-end pr-1.5 pointer-events-none z-10">
                         <span className="text-[9px] font-extrabold text-cyan-300/60">75%</span>
@@ -521,7 +521,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ theme, players, targetStep
                     </div>
 
                     {/* Main Vertical Battery Chamber */}
-                    <div className="relative w-24 sm:w-28 h-52 sm:h-60 bg-slate-900/95 rounded-2xl border-4 border-emerald-500/70 p-1.5 flex flex-col justify-end overflow-hidden shadow-[0_0_25px_rgba(16,185,129,0.2)]">
+                    <div className="relative w-24 sm:w-28 h-[16vh] sm:h-[20vh] min-h-[130px] max-h-[250px] bg-slate-900/95 rounded-2xl border-4 border-emerald-500/70 p-1.5 flex flex-col justify-end overflow-hidden shadow-[0_0_25px_rgba(16,185,129,0.2)]">
                       {/* Horizontal Percentage Marker Lines (25%, 50%, 75%) */}
                       <div className="absolute inset-x-0 bottom-[25%] border-b border-emerald-500/25 flex items-center justify-end pr-1 pointer-events-none z-20">
                         <span className="text-[9px] font-bold text-emerald-500/60">25%</span>
@@ -652,7 +652,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({ theme, players, targetStep
                     </div>
 
                     {/* 3. MAIN OILY WOODEN TREE TRUNK */}
-                    <div className="relative w-24 sm:w-28 h-44 sm:h-52 md:h-56 bg-amber-950 rounded-b-xl border-x-4 border-b-4 border-amber-800/90 p-1 flex flex-col justify-end overflow-hidden shadow-[0_0_20px_rgba(180,83,9,0.3)] -mt-1">
+                    <div className="relative w-24 sm:w-28 h-[14vh] sm:h-[18vh] min-h-[120px] max-h-[220px] bg-amber-950 rounded-b-xl border-x-4 border-b-4 border-amber-800/90 p-1 flex flex-col justify-end overflow-hidden shadow-[0_0_20px_rgba(180,83,9,0.3)] -mt-1">
                       {/* Tree Bark Notch Rings & Texture */}
                       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(120,53,15,0.9)_0%,rgba(69,26,3,0.95)_50%,rgba(120,53,15,0.9)_100%)] pointer-events-none" />
                       

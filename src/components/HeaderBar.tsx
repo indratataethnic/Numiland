@@ -70,7 +70,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
   };
 
   return (
-    <header className="w-full bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-2.5 sm:px-4 py-2 sm:py-2.5 flex items-center justify-between text-white select-none z-30 shadow-lg flex-wrap gap-y-2">
+    <header className="w-full bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-2.5 sm:px-4 py-2 sm:py-2.5 safe-p-top safe-p-left safe-p-right flex items-center justify-between text-white select-none z-30 shadow-lg flex-wrap gap-y-2">
       {/* Brand & Theme Tag */}
       <div className="flex items-center gap-2 sm:gap-3">
         <div className="flex items-center gap-1.5 sm:gap-2 bg-gradient-to-r from-amber-500 to-orange-600 text-slate-950 font-black px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-xl shadow-md tracking-wider text-sm sm:text-lg">
