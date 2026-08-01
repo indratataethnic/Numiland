@@ -84,6 +84,7 @@ export interface GameSettings {
   soundEnabled: boolean;
   inputType: 'numpad' | 'multiple_choice';
   allowIndividualGrade: boolean; // Each player can have distinct grade level
+  blindMode?: boolean; // New setting for Mode Buta (Problem disappears in 3s)
 }
 
 export type GameStage = 'setup' | 'countdown' | 'playing' | 'paused' | 'victory';

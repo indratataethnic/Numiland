@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PlayerState, UiScale } from '../types';
-import { Delete, Check, Flame, Zap, Award, Sparkles } from 'lucide-react';
+import { Delete, Check, Flame, Zap, Award, Sparkles, Eye } from 'lucide-react';
 import { audio } from '../utils/audio';
 
 interface PlayerPadProps {
@@ -11,6 +11,7 @@ interface PlayerPadProps {
   totalSteps: number;
   layoutPosition: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'left-side' | 'right-side' | 'col';
   uiScale: UiScale;
+  blindMode?: boolean;
 }
 
 export const PlayerPad: React.FC<PlayerPadProps> = ({
@@ -21,8 +22,51 @@ export const PlayerPad: React.FC<PlayerPadProps> = ({
   totalSteps,
   layoutPosition,
   uiScale,
+  blindMode = false,
 }) => {
   const [localInput, setLocalInput] = useState<string>('');
+  const [blindTimer, setBlindTimer] = useState<number>(3);
+  const [isBlindHidden, setIsBlindHidden] = useState<boolean>(false);
+  const [peekActive, setPeekActive] = useState<boolean>(false);
+
+  const currentProblem = player.currentProblem;
+
+  // Mode Buta 3-second visibility timer
+  useEffect(() => {
+    if (!blindMode || !currentProblem) {
+      setIsBlindHidden(false);
+      setBlindTimer(3);
+      setPeekActive(false);
+      return;
+    }
+
+    // Reset when new problem is set or after feedback
+    setBlindTimer(3);
+    setIsBlindHidden(false);
+    setPeekActive(false);
+
+    const interval = setInterval(() => {
+      setBlindTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setIsBlindHidden(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [currentProblem?.id, blindMode, player.feedback]);
+
+  const handlePeek = () => {
+    if (peekActive) return;
+    audio.playTap();
+    setPeekActive(true);
+    setTimeout(() => {
+      setPeekActive(false);
+    }, 1000);
+  };
 
   const handleNumClick = (val: string) => {
     if (player.feedback === 'locked' || isPaused || !player.currentProblem) return;
@@ -59,8 +103,6 @@ export const PlayerPad: React.FC<PlayerPadProps> = ({
       setLocalInput('');
     }
   };
-
-  const currentProblem = player.currentProblem;
 
   // Configuration map for responsive screen sizes and large 65" whiteboards
   const scaleStyles = {
@@ -199,15 +241,60 @@ export const PlayerPad: React.FC<PlayerPadProps> = ({
       <div className={`my-1 sm:my-2 p-2 sm:p-3 rounded-2xl bg-slate-950/80 border border-slate-800 flex flex-col items-center justify-center text-center relative overflow-hidden ${style.problemMinHeight}`}>
         {currentProblem ? (
           <>
-            <div className={`${style.problemText} font-black text-white tracking-wider font-mono`}>
-              {currentProblem.questionStr}
-            </div>
+            {/* Mode Buta status badge */}
+            {blindMode && (
+              <div className="mb-1 flex items-center justify-between gap-1.5 w-full px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-bold bg-purple-950/80 border border-purple-500/40 text-purple-300">
+                <span className="flex items-center gap-1">
+                  <span>🙈 Mode Buta:</span>
+                  {!isBlindHidden || peekActive ? (
+                    <span className="text-amber-300 font-black animate-pulse">
+                      {peekActive ? 'Mengintip (1s)...' : `Tampil ${blindTimer}s...`}
+                    </span>
+                  ) : (
+                    <span className="text-purple-300 font-extrabold">
+                      Soal Tersembunyi!
+                    </span>
+                  )}
+                </span>
 
-            {/* Visual Hint for Grade 1-2 */}
-            {currentProblem.visualHint && (
-              <div className={`mt-1 ${style.visualHintText} text-amber-300 font-medium tracking-widest bg-amber-950/40 rounded-full border border-amber-500/20`}>
-                {currentProblem.visualHint}
+                {isBlindHidden && (
+                  <button
+                    onClick={handlePeek}
+                    disabled={peekActive}
+                    className="flex items-center gap-1 bg-purple-800/80 hover:bg-purple-700 text-purple-100 px-2 py-0.5 rounded-md text-[9px] sm:text-[10px] font-bold transition active:scale-95 cursor-pointer border border-purple-400/40"
+                    title="Intip soal sekejap (1 detik)"
+                  >
+                    <Eye className="w-3 h-3 text-purple-200" />
+                    <span>Intip</span>
+                  </button>
+                )}
               </div>
+            )}
+
+            {/* Problem text / Visual Hint or Hidden state */}
+            {blindMode && isBlindHidden && !peekActive ? (
+              <div className="flex flex-col items-center justify-center py-1">
+                <div className={`${style.problemText} font-black text-purple-400 tracking-wider font-mono flex items-center gap-2`}>
+                  <span>🙈</span>
+                  <span>? ? ?</span>
+                </div>
+                <span className="text-[10px] sm:text-xs text-purple-300/80 font-medium mt-0.5">
+                  Fokus & ingat angka soal tadi!
+                </span>
+              </div>
+            ) : (
+              <>
+                <div className={`${style.problemText} font-black text-white tracking-wider font-mono`}>
+                  {currentProblem.questionStr}
+                </div>
+
+                {/* Visual Hint for Grade 1-2 */}
+                {currentProblem.visualHint && (
+                  <div className={`mt-1 ${style.visualHintText} text-amber-300 font-medium tracking-widest bg-amber-950/40 rounded-full border border-amber-500/20`}>
+                    {currentProblem.visualHint}
+                  </div>
+                )}
+              </>
             )}
 
             {/* Input Display (Numpad mode) */}

@@ -32,6 +32,7 @@ const INITIAL_SETTINGS: GameSettings = {
   soundEnabled: true,
   inputType: 'numpad',
   allowIndividualGrade: true,
+  blindMode: false,
 };
 
 const INITIAL_PLAYERS: PlayerState[] = [
@@ -353,10 +354,10 @@ export default function App() {
   const isGameplay = stage === 'playing' || stage === 'paused' || stage === 'countdown';
 
   const boardHeightClass =
-    uiScale === 'small' ? 'h-[23vh] sm:h-[26vh] min-h-[120px] max-h-[220px]' :
-    uiScale === 'large' ? 'h-[25vh] sm:h-[28vh] min-h-[140px] max-h-[280px]' :
-    uiScale === 'huge' ? 'h-[20vh] sm:h-[23vh] min-h-[110px] max-h-[200px]' :
-    'h-[28vh] sm:h-[32vh] min-h-[160px] max-h-[350px]';
+    uiScale === 'small' ? 'h-[22vh] sm:h-[25vh] min-h-[130px] max-h-[200px]' :
+    uiScale === 'large' ? 'h-[28vh] sm:h-[32vh] min-h-[170px] max-h-[290px]' :
+    uiScale === 'huge' ? 'h-[24vh] sm:h-[26vh] min-h-[140px] max-h-[220px]' :
+    'h-[25vh] sm:h-[28vh] min-h-[150px] max-h-[250px]';
 
   return (
     <div className={`w-full bg-gradient-to-br ${currentTheme.bgGradient} text-white flex flex-col font-sans select-none ${isGameplay ? 'h-screen max-h-screen overflow-hidden' : 'min-h-screen overflow-x-hidden'}`}>
@@ -491,6 +492,7 @@ export default function App() {
                   totalSteps={settings.targetSteps}
                   layoutPosition="col"
                   uiScale={uiScale}
+                  blindMode={settings.blindMode}
                 />
               ))}
             </div>

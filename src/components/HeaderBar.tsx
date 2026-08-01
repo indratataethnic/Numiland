@@ -92,6 +92,11 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
         <div className="flex items-center gap-1.5 sm:gap-2 bg-slate-950/60 px-2.5 sm:px-4 py-1 sm:py-1.5 rounded-full border border-slate-800 text-xs sm:text-sm">
           <span className="text-amber-400 font-semibold uppercase tracking-wider text-[10px] sm:text-xs">Target:</span>
           <span className="font-bold text-white">{settings.targetSteps} Langkah</span>
+          {settings.blindMode && (
+            <span className="ml-1 px-2 py-0.5 bg-purple-500/20 text-purple-300 border border-purple-500/40 rounded-full text-[10px] sm:text-xs font-bold flex items-center gap-1">
+              🙈 Mode Buta
+            </span>
+          )}
           {stage === 'paused' && (
             <span className="ml-1 px-1.5 py-0.5 bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 rounded text-[10px] sm:text-xs font-bold animate-pulse">
               DIPAUS

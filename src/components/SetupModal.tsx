@@ -440,6 +440,44 @@ export const SetupModal: React.FC<SetupModalProps> = ({
                   </button>
                 </div>
               </div>
+
+              {/* Mode Buta (Blind / Memory Mode) */}
+              <div>
+                <label className="block text-sm font-bold text-white mb-2 flex items-center gap-2">
+                  <span>🙈</span>
+                  <span>Tantangan 'Mode Buta' (Fokus & Memori Cepat):</span>
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setSettings((prev) => ({ ...prev, blindMode: !prev.blindMode }))}
+                  className={`w-full p-3.5 rounded-2xl border-2 font-medium text-left transition cursor-pointer flex items-center justify-between ${
+                    settings.blindMode
+                      ? 'border-purple-400 bg-purple-500/20 text-white ring-2 ring-purple-400/50'
+                      : 'border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="text-2xl sm:text-3xl">🙈</div>
+                    <div>
+                      <div className={`font-bold text-sm sm:text-base ${settings.blindMode ? 'text-purple-300' : 'text-white'}`}>
+                        {settings.blindMode ? 'AKTIF — Mode Buta (Soal Hilang Dalam 3 Detik)' : 'NONAKTIF — Mode Normal (Soal Tampak Terus)'}
+                      </div>
+                      <div className="text-xs text-slate-400 mt-0.5">
+                        Soal matematika hanya tampil 3 detik lalu tersembunyi. Pemain melatih ingatan angka & konsentrasi tinggi!
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    className={`px-3 py-1 rounded-full text-xs font-extrabold uppercase shrink-0 ${
+                      settings.blindMode
+                        ? 'bg-purple-500 text-white shadow-lg animate-pulse'
+                        : 'bg-slate-800 text-slate-400'
+                    }`}
+                  >
+                    {settings.blindMode ? 'AKTIF' : 'OFF'}
+                  </div>
+                </button>
+              </div>
             </div>
           )}
 
